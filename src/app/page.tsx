@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, CheckCircle2, ChevronLeft, CheckSquare, Square, Download, AlertCircle } from 'lucide-react';
+import { ArrowRight, CheckCircle2, ChevronLeft, CheckSquare, Square, Download, AlertCircle, Info } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import html2canvas from 'html2canvas';
@@ -12,10 +12,12 @@ function cn(...inputs: ClassValue[]) {
 }
 
 // --- Types & Data ---
-type Step = 'hero' | 'step1' | 'step2A' | 'step2B' | 'step3' | 'result';
+type Step = 'hero' | 'step1' | 'stepSize' | 'step2A' | 'step2B' | 'step3' | 'result';
 
 interface Selections {
   type: string;
+  typeLabel: string;
+  size?: string;
   operation?: string;
   special?: string;
   hardware: string[];
@@ -45,14 +47,15 @@ const fadeVariants = {
 export default function App() {
   const [currentStep, setCurrentStep] = useState<Step>('hero');
   const [history, setHistory] = useState<Step[]>([]);
-  const [selections, setSelections] = useState<Selections>({ type: '', hardware: [] });
+  const [selections, setSelections] = useState<Selections>({ type: '', typeLabel: '', hardware: [] });
   
   // 결과 분리 (기본 vs 추가)
   const [result, setResult] = useState({
     title: '', 
     basic: [] as string[], 
     additional: [] as string[],
-    reason: '' 
+    reason: '',
+    summaryText: '' // 고객이 선택한 요약 정보
   });
 
   const captureRef = useRef<HTMLDivElement>(null);
@@ -72,14 +75,20 @@ export default function App() {
     setCurrentStep(prevStep);
   };
 
-  const handleStep1 = (type: string) => {
-    setSelections(prev => ({ ...prev, type, operation: undefined, special: undefined, hardware: [] }));
-    if (type === 'A') goToStep('step2A'); 
+  const handleStep1 = (type: string, label: string) => {
+    setSelections(prev => ({ ...prev, type, typeLabel: label, size: undefined, operation: undefined, special: undefined, hardware: [] }));
+    
+    if (type === 'A') goToStep('stepSize'); // 일반 홀운영 (규모 확인 추가)
     else if (type === 'B') calculateResult('B'); 
     else if (type === 'C') calculateResult('C'); 
     else if (type === 'D') goToStep('step2B'); 
     else if (type === 'E') calculateResult('E'); 
   };
+
+  const handleStepSize = (size: string) => {
+    setSelections(prev => ({ ...prev, size }));
+    goToStep('step2A'); // 식당 상세 결제조건으로 이동
+  }
 
   const handleStep2A = (operation: string) => {
     setSelections(prev => ({ ...prev, operation }));
@@ -106,6 +115,14 @@ export default function App() {
     let basicItems = ['포스 1세트', '네이버 커넥트 단말기 (기본 제공)'];
     let additionalItems: string[] = [];
     let reasonText = '';
+    
+    // 유저 선택 요약 텍스트 생성
+    let summaryArr = [selections.typeLabel];
+    if (selections.size) summaryArr.push(selections.size);
+    if (selections.operation) summaryArr.push(selections.operation);
+    if (selections.special) summaryArr.push(selections.special);
+    if (selections.hardware.length > 0) summaryArr.push('추가옵션 있음');
+    const summaryText = summaryArr.filter(Boolean).join(' · ');
 
     if (flow === 'B') {
       additionalItems.push('배달매니저 (프로그램)', '주방프린터');
@@ -117,13 +134,19 @@ export default function App() {
       basicItems = ['정밀 진단 후 맞춤 구성 안내'];
       reasonText = '무인 매장이나 팝업스토어는 환경에 따라 변수가 많습니다. 커넥트 단말기의 100% 활용 여부를 포함하여 전문 상담원이 정밀 진단을 진행합니다.';
     } else if (flow === 'complex') {
-      if (selections.type === 'A') {
+      if (selections.type === 'A') { // 요식업 계열
         if (selections.operation === '선불형') {
           additionalItems.push('일반 키오스크', '또는 QR오더 키오스크 모드 (스티커 부착형)', '또는 네이버 커넥트 단말기 키오스크 모드');
           reasonText = '바쁜 카운터 업무 분산을 위해 키오스크 도입을 추천합니다. 공간이나 비용이 부담스럽다면 스티커 부착형 QR오더를 키오스크로 활용하거나, 기본 제공되는 커넥트 단말기를 키오스크 모드로 즉시 전환하여 사용할 수 있습니다.';
         } else if (selections.operation === '후불형') {
           additionalItems.push('QR오더 (테이블오더 대체)', '오더포스 (직원용 주문기)');
           reasonText = '고가의 테이블오더 태블릿 대신, 고객 휴대폰을 활용하는 QR오더를 도입해 초기 비용을 대폭 절감하세요. 주문은 포스로 즉시 전송되어 누락 없는 후불 결제가 가능합니다.';
+        }
+        
+        // 매장 규모에 따른 동적 로직 추가
+        if (selections.size === '대형 매장 (테이블 15개 이상)' && selections.operation === '후불형') {
+             reasonText += ' 특히 대형 매장의 경우 직원들의 이동 동선을 줄이기 위해 오더포스와 여러 대의 주방프린터(또는 KDS) 도입을 적극 검토해야 합니다.';
+             if (!additionalItems.includes('주방프린터')) additionalItems.push('주방프린터 (복수 대수 권장)');
         }
       } else if (selections.type === 'D') {
         if (selections.special === '바코드') {
@@ -146,7 +169,9 @@ export default function App() {
         reasonText += ' 추가로 듀얼모니터를 통해 주문 내역을 투명하게 공유하여 신뢰도를 높이세요.';
       }
       if (selections.hardware.includes('printer')) {
-        if (!additionalItems.includes('주방프린터')) additionalItems.push('주방프린터');
+        if (!additionalItems.includes('주방프린터') && !additionalItems.includes('주방프린터 (복수 대수 권장)')) {
+             additionalItems.push('주방프린터');
+        }
         reasonText += ' 주방프린터는 홀과 주방의 물리적 거리를 극복하는 필수 추가 옵션입니다.';
       }
       if (selections.hardware.includes('kds')) {
@@ -159,7 +184,8 @@ export default function App() {
       title: '사장님 매장에 가장 합리적인 맞춤 구성입니다.',
       basic: basicItems,
       additional: additionalItems,
-      reason: reasonText
+      reason: reasonText,
+      summaryText
     });
     
     goToStep('result');
@@ -254,7 +280,7 @@ export default function App() {
                   ].map((item) => (
                     <button
                       key={item.id}
-                      onClick={() => handleStep1(item.id)}
+                      onClick={() => handleStep1(item.id, item.label)}
                       className="w-full min-h-[88px] bg-[#F9FAFB] border border-[#E5E7EB] hover:border-black rounded-2xl text-2xl font-bold tracking-tight text-left px-6 py-4 active:bg-gray-100 transition-colors break-keep flex items-center"
                     >
                       {item.label}
@@ -264,10 +290,34 @@ export default function App() {
               </motion.div>
             )}
 
-            {/* [Step 2A: F&B] */}
+            {/* [Step Size: F&B Only] */}
+            {currentStep === 'stepSize' && (
+              <motion.div key="stepSize" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col pb-20">
+                <span className="text-[#0055FF] font-black text-xl mb-3 block">STEP 2</span>
+                <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-12 break-keep text-black">매장의 규모는 어느 정도인가요?</h2>
+                <div className="flex flex-col gap-4">
+                  <button
+                    onClick={() => handleStepSize('소형/중형 매장 (테이블 15개 미만)')}
+                    className="w-full bg-[#F9FAFB] border border-[#E5E7EB] hover:border-black rounded-2xl text-left px-6 py-8 active:bg-gray-100 transition-colors flex flex-col gap-2"
+                  >
+                    <span className="text-3xl font-black tracking-tight text-black">소형/중형 매장</span>
+                    <span className="text-lg text-gray-500 font-medium">테이블 15개 미만</span>
+                  </button>
+                  <button
+                    onClick={() => handleStepSize('대형 매장 (테이블 15개 이상)')}
+                    className="w-full bg-[#F9FAFB] border border-[#E5E7EB] hover:border-black rounded-2xl text-left px-6 py-8 active:bg-gray-100 transition-colors flex flex-col gap-2"
+                  >
+                    <span className="text-3xl font-black tracking-tight text-black">대형 매장</span>
+                    <span className="text-lg text-gray-500 font-medium">테이블 15개 이상 (직원 동선 김)</span>
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {/* [Step 2A: F&B Operation] */}
             {currentStep === 'step2A' && (
               <motion.div key="step2A" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col pb-20">
-                <span className="text-[#0055FF] font-black text-xl mb-3 block">STEP 2</span>
+                <span className="text-[#0055FF] font-black text-xl mb-3 block">STEP 3</span>
                 <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-12 break-keep text-black">결제는 언제 이루어지나요?</h2>
                 <div className="flex flex-col gap-4">
                   <button
@@ -302,7 +352,7 @@ export default function App() {
                   ].map((item) => (
                     <button
                       key={item.id}
-                      onClick={() => handleStep2B(item.id)}
+                      onClick={() => handleStep2B(item.label)}
                       className="w-full min-h-[88px] bg-[#F9FAFB] border border-[#E5E7EB] hover:border-black rounded-2xl text-2xl font-bold tracking-tight text-left px-6 py-4 active:bg-gray-100 transition-colors break-keep flex items-center"
                     >
                       {item.label}
@@ -315,7 +365,7 @@ export default function App() {
             {/* [Step 3: Hardware Options] */}
             {currentStep === 'step3' && (
               <motion.div key="step3" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col pb-20">
-                <span className="text-[#0055FF] font-black text-xl mb-3 block">STEP 3 (추가 선택)</span>
+                <span className="text-[#0055FF] font-black text-xl mb-3 block">마지막 단계 (선택)</span>
                 <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-4 break-keep text-black">추가 옵션을 골라주세요.</h2>
                 <p className="text-xl text-gray-500 font-medium mb-10">해당 없으면 바로 넘어가세요.</p>
                 
@@ -368,6 +418,14 @@ export default function App() {
                   ref={captureRef}
                   className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-3xl p-6 sm:p-10 mb-6"
                 >
+                  {/* 선택 요약 배지 */}
+                  {result.summaryText && (
+                    <div className="mb-6 inline-flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-xl text-sm font-bold text-gray-600 border border-gray-200">
+                      <Info className="w-4 h-4" />
+                      <span>선택 조건: {result.summaryText}</span>
+                    </div>
+                  )}
+
                   {/* 기본 세트 */}
                   <div className="mb-8">
                     <span className="text-[#0055FF] font-black text-sm mb-3 block border-b border-gray-200 pb-2">기본 구성품</span>
@@ -405,7 +463,7 @@ export default function App() {
                   <div className="mt-6 flex items-start gap-2 text-gray-400">
                      <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
                      <p className="text-xs font-medium leading-relaxed break-keep">
-                       본 추천 구성은 참고용이며, 실제 상담 시 매장 환경에 따라 추천 안내가 변경될 수 있습니다.
+                       본 추천 구성은 고객님의 선택에 기반한 참고용입니다. 실제 상담 시 매장 환경에 따라 더욱 최적화된 기기와 서비스가 안내될 수 있습니다.
                      </p>
                   </div>
                 </div>
