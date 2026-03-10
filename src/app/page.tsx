@@ -12,7 +12,7 @@ function cn(...inputs: ClassValue[]) {
 }
 
 // --- Types & Data ---
-type Step = 'hero' | 'step1' | 'stepSize' | 'step2A' | 'step2B' | 'step3' | 'result';
+type Step = 'hero' | 'step1' | 'stepSize' | 'step2A' | 'step2B' | 'step2C' | 'step3' | 'result';
 
 interface Selections {
   type: string;
@@ -83,6 +83,7 @@ export default function App() {
     else if (type === 'C') calculateResult('C'); 
     else if (type === 'D') goToStep('step2B'); 
     else if (type === 'E') calculateResult('E'); 
+    else if (type === 'F') goToStep('step2C'); // 단순 결제/이동형 매장
   };
 
   const handleStepSize = (size: string) => {
@@ -133,6 +134,12 @@ export default function App() {
     } else if (flow === 'E') {
       basicItems = ['정밀 진단 후 맞춤 구성 안내'];
       reasonText = '무인 매장이나 팝업스토어는 환경에 따라 변수가 많습니다. 커넥트 단말기의 100% 활용 여부를 포함하여 전문 상담원이 정밀 진단을 진행합니다.';
+    } else if (flow === 'F1') {
+      basicItems = ['3인치 유선 카드단말기'];
+      reasonText = '포스기 없이 빠르고 간편하게 영수증 출력이 가능한 가장 경제적이고 베이직한 결제 세팅입니다.';
+    } else if (flow === 'F2') {
+      basicItems = ['무선단말기 (블루투스형 OR 통신형)'];
+      reasonText = '이동 결제에 필수적인 무선 장비입니다. 스마트폰과 블루투스로 연결하는 방식과, 통신료가 발생하지만 단독 개통해서 쓰는 통신형 모델 중 상황에 맞게 비교해 드립니다.';
     } else if (flow === 'complex') {
       if (selections.type === 'A') { // 요식업 계열
         if (selections.operation === '선불형') {
@@ -277,11 +284,12 @@ export default function App() {
                     { id: 'C', label: '100% 테이크아웃' },
                     { id: 'D', label: '유통/도소매/서비스업' },
                     { id: 'E', label: '특수 (무인매장/팝업)' },
+                    { id: 'F', label: '단순 결제/이동형 (포스 불필요)' },
                   ].map((item) => (
                     <button
                       key={item.id}
                       onClick={() => handleStep1(item.id, item.label)}
-                      className="w-full min-h-[88px] bg-[#F9FAFB] border border-[#E5E7EB] hover:border-black rounded-2xl text-2xl font-bold tracking-tight text-left px-6 py-4 active:bg-gray-100 transition-colors break-keep flex items-center"
+                      className="w-full min-h-[88px] bg-[#F9FAFB] border border-[#E5E7EB] hover:border-black rounded-2xl text-2xl sm:text-3xl font-bold tracking-tight text-left px-6 py-4 active:bg-gray-100 transition-colors break-keep flex items-center"
                     >
                       {item.label}
                     </button>
@@ -362,6 +370,36 @@ export default function App() {
               </motion.div>
             )}
 
+            {/* [Step 2C: Simple/Mobile Payment] */}
+            {currentStep === 'step2C' && (
+              <motion.div key="step2C" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col pb-20">
+                <span className="text-[#0055FF] font-black text-xl mb-3 block">STEP 2</span>
+                <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-12 break-keep text-black">주로 어디서 결제가 이루어지나요?</h2>
+                <div className="flex flex-col gap-4">
+                  <button
+                    onClick={() => {
+                      setSelections(prev => ({ ...prev, special: '고정카운터 단독결제' }));
+                      calculateResult('F1');
+                    }}
+                    className="w-full bg-[#F9FAFB] border border-[#E5E7EB] hover:border-black rounded-2xl text-left px-6 py-8 active:bg-gray-100 transition-colors flex flex-col gap-2"
+                  >
+                    <span className="text-2xl sm:text-3xl font-black tracking-tight text-black break-keep">매장 내 고정된 카운터</span>
+                    <span className="text-base sm:text-lg text-gray-500 font-medium break-keep">단순 결제와 영수증 출력만 필요함</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelections(prev => ({ ...prev, special: '무선/이동 결제' }));
+                      calculateResult('F2');
+                    }}
+                    className="w-full bg-[#F9FAFB] border border-[#E5E7EB] hover:border-black rounded-2xl text-left px-6 py-8 active:bg-gray-100 transition-colors flex flex-col gap-2"
+                  >
+                    <span className="text-2xl sm:text-3xl font-black tracking-tight text-black break-keep">야외, 플리마켓, 배달 등</span>
+                    <span className="text-base sm:text-lg text-gray-500 font-medium break-keep">이동이 잦아 무선 결제가 필수임</span>
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
             {/* [Step 3: Hardware Options] */}
             {currentStep === 'step3' && (
               <motion.div key="step3" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col pb-20">
@@ -420,8 +458,8 @@ export default function App() {
                 >
                   {/* 선택 요약 배지 */}
                   {result.summaryText && (
-                    <div className="mb-6 inline-flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-xl text-sm font-bold text-gray-600 border border-gray-200">
-                      <Info className="w-4 h-4" />
+                    <div className="mb-6 inline-flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-xl text-sm font-bold text-gray-600 border border-gray-200 break-all">
+                      <Info className="w-4 h-4 flex-shrink-0" />
                       <span>선택 조건: {result.summaryText}</span>
                     </div>
                   )}
@@ -469,13 +507,15 @@ export default function App() {
                 </div>
 
                 {/* Additional Recommendation */}
-                <div className="bg-blue-50/50 border border-blue-100 rounded-3xl p-6 sm:p-8 mb-12">
-                  <span className="text-[#0055FF] font-black text-sm mb-2 block">+ 강력 추천 소프트웨어</span>
-                  <h4 className="text-xl sm:text-2xl font-black tracking-tight mb-2 text-black">단골플러스 & 오늘얼마</h4>
-                  <p className="text-gray-600 font-medium text-base leading-relaxed break-keep">
-                    포인트 적립(CRM)과 실시간 모바일 매출 관리 환경을 구축하세요.
-                  </p>
-                </div>
+                {selections.type !== 'F' && (
+                  <div className="bg-blue-50/50 border border-blue-100 rounded-3xl p-6 sm:p-8 mb-12">
+                    <span className="text-[#0055FF] font-black text-sm mb-2 block">+ 강력 추천 소프트웨어</span>
+                    <h4 className="text-xl sm:text-2xl font-black tracking-tight mb-2 text-black">단골플러스 & 오늘얼마</h4>
+                    <p className="text-gray-600 font-medium text-base leading-relaxed break-keep">
+                      포인트 적립(CRM)과 실시간 모바일 매출 관리 환경을 구축하세요.
+                    </p>
+                  </div>
+                )}
 
                 <div className="flex flex-col gap-4">
                   <button
