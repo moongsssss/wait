@@ -256,6 +256,39 @@ export default function App() {
             {/* HERO */}
             {currentStep === 'hero' && (
               <motion.div key="hero" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col h-full justify-center pb-20">
+                {/* 도입 프로세스 요약 가이드 (추가됨) */}
+                <div className="bg-[#F8FAFC] border border-blue-100 rounded-[2rem] p-6 sm:p-8 mb-12 shadow-sm">
+                  <div className="flex items-center gap-2 mb-6">
+                    <Info className="w-5 h-5 text-[#0055FF]" />
+                    <span className="text-sm font-black tracking-widest text-[#0055FF] uppercase">Service Process</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 relative">
+                    {[
+                      { title: '상담 진행', desc: '전문 컨설턴트 배정' },
+                      { title: '서류 수취', desc: '카드가맹 필수 서류' },
+                      { title: '가맹 접수', desc: '영업일 3~5일 소요' },
+                      { title: '방문 설치', desc: '완료 시점에 방문' },
+                    ].map((step, i) => (
+                      <div key={i} className="flex flex-col gap-1 relative">
+                        <div className="flex items-center gap-3">
+                          <div className="w-6 h-6 rounded-full bg-[#0055FF] text-white flex items-center justify-center text-xs font-black shrink-0">
+                            {i + 1}
+                          </div>
+                          <span className="text-lg font-black text-[#0F172A] tracking-tighter">{step.title}</span>
+                        </div>
+                        <p className="text-sm text-gray-500 font-bold ml-9">{step.desc}</p>
+                        {i < 3 && <div className="hidden lg:block absolute top-3 -right-2 w-4 h-[2px] bg-gray-200"></div>}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-6 pt-6 border-t border-gray-100 flex items-start gap-2 text-gray-400">
+                    <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                    <p className="text-[11px] sm:text-xs font-bold leading-relaxed break-keep">
+                      신규상담 및 신규 설치는 평일 영업시간 내에 순차적으로 진행됩니다.
+                    </p>
+                  </div>
+                </div>
+
                 <div className="inline-block p-4 bg-[#F8FAFC] rounded-3xl w-max mb-8 border border-gray-100 shadow-sm">
                   <Store className="w-10 h-10 text-[#0055FF]" />
                 </div>
