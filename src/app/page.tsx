@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, CheckCircle2, ChevronLeft, CheckSquare, Square, Download, AlertCircle, Info } from 'lucide-react';
+import { ArrowRight, CheckCircle2, ChevronLeft, CheckSquare, Square, Download, AlertCircle, Info, Store, ShoppingBag, UtensilsCrossed, Coffee, Box, MapPin } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import html2canvas from 'html2canvas';
@@ -39,9 +39,9 @@ const PROCESS = [
 
 // --- Animations ---
 const fadeVariants = {
-  initial: { opacity: 0, y: 15 },
+  initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0, transition: { duration: 0.4 } },
-  exit: { opacity: 0, y: -15, transition: { duration: 0.3 } }
+  exit: { opacity: 0, y: -20, transition: { duration: 0.3 } }
 };
 
 export default function App() {
@@ -50,12 +50,12 @@ export default function App() {
   const [selections, setSelections] = useState<Selections>({ type: '', typeLabel: '', hardware: [] });
   
   // 결과 분리 (기본 vs 추가)
-  const [result, setResult] = useState({
+  const [result, setResult] = useState({ 
     title: '', 
     basic: [] as string[], 
     additional: [] as string[],
     reason: '',
-    summaryText: '' // 고객이 선택한 요약 정보
+    summaryText: ''
   });
 
   const captureRef = useRef<HTMLDivElement>(null);
@@ -77,18 +77,17 @@ export default function App() {
 
   const handleStep1 = (type: string, label: string) => {
     setSelections(prev => ({ ...prev, type, typeLabel: label, size: undefined, operation: undefined, special: undefined, hardware: [] }));
-    
-    if (type === 'A') goToStep('stepSize'); // 일반 홀운영 (규모 확인 추가)
+    if (type === 'A') goToStep('stepSize'); 
     else if (type === 'B') calculateResult('B'); 
     else if (type === 'C') calculateResult('C'); 
     else if (type === 'D') goToStep('step2B'); 
     else if (type === 'E') calculateResult('E'); 
-    else if (type === 'F') goToStep('step2C'); // 단순 결제/이동형 매장
+    else if (type === 'F') goToStep('step2C'); 
   };
 
   const handleStepSize = (size: string) => {
     setSelections(prev => ({ ...prev, size }));
-    goToStep('step2A'); // 식당 상세 결제조건으로 이동
+    goToStep('step2A');
   }
 
   const handleStep2A = (operation: string) => {
@@ -112,12 +111,10 @@ export default function App() {
   };
 
   const calculateResult = (flow: string) => {
-    // 모든 구성의 뼈대
     let basicItems = ['포스 1세트', '네이버 커넥트 단말기 (기본 제공)'];
     let additionalItems: string[] = [];
     let reasonText = '';
     
-    // 유저 선택 요약 텍스트 생성
     let summaryArr = [selections.typeLabel];
     if (selections.size) summaryArr.push(selections.size);
     if (selections.operation) summaryArr.push(selections.operation);
@@ -141,7 +138,7 @@ export default function App() {
       basicItems = ['무선단말기 (블루투스형 OR 통신형)'];
       reasonText = '이동 결제에 필수적인 무선 장비입니다. 스마트폰과 블루투스로 연결하는 방식과, 통신료가 발생하지만 단독 개통해서 쓰는 통신형 모델 중 상황에 맞게 비교해 드립니다.';
     } else if (flow === 'complex') {
-      if (selections.type === 'A') { // 요식업 계열
+      if (selections.type === 'A') {
         if (selections.operation === '선불형') {
           additionalItems.push('일반 키오스크', '또는 QR오더 키오스크 모드 (스티커 부착형)', '또는 네이버 커넥트 단말기 키오스크 모드');
           reasonText = '바쁜 카운터 업무 분산을 위해 키오스크 도입을 추천합니다. 공간이나 비용이 부담스럽다면 스티커 부착형 QR오더를 키오스크로 활용하거나, 기본 제공되는 커넥트 단말기를 키오스크 모드로 즉시 전환하여 사용할 수 있습니다.';
@@ -150,7 +147,6 @@ export default function App() {
           reasonText = '고가의 테이블오더 태블릿 대신, 고객 휴대폰을 활용하는 QR오더를 도입해 초기 비용을 대폭 절감하세요. 주문은 포스로 즉시 전송되어 누락 없는 후불 결제가 가능합니다.';
         }
         
-        // 매장 규모에 따른 동적 로직 추가
         if (selections.size === '대형 매장 (테이블 15개 이상)' && selections.operation === '후불형') {
              reasonText += ' 특히 대형 매장의 경우 직원들의 이동 동선을 줄이기 위해 오더포스와 여러 대의 주방프린터(또는 KDS) 도입을 적극 검토해야 합니다.';
              if (!additionalItems.includes('주방프린터')) additionalItems.push('주방프린터 (복수 대수 권장)');
@@ -198,51 +194,58 @@ export default function App() {
     goToStep('result');
   };
 
-  // --- Capture Function ---
   const handleCapture = async () => {
     if (captureRef.current) {
       try {
         const canvas = await html2canvas(captureRef.current, { 
           scale: 2,
-          backgroundColor: '#F9FAFB'
+          backgroundColor: '#F8FAFC' // Softer background for capture
         });
         const image = canvas.toDataURL("image/png");
         const link = document.createElement("a");
         link.href = image;
         link.download = "okpos_recommendation.png";
         link.click();
-        alert("구성이 이미지로 저장되었습니다.\n상담원에게 이 이미지를 보여주시면 더욱 빠른 안내가 가능합니다!");
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        alert("구성이 갤러리에 저장되었습니다. 상담 시 이미지를 보여주시면 더욱 빠른 안내가 가능합니다.");
       } catch (e) {
         console.error("Capture failed:", e);
-        alert("화면 저장에 실패했습니다. 직접 스크린샷을 찍어주세요.");
+        alert("화면 저장에 실패했습니다. 직접 캡처를 이용해주세요.");
       }
     }
   };
 
+  // 1-3 Step Progress Indicator
+  const renderProgress = (stepNum: number) => (
+    <div className="flex items-center gap-2 mb-8">
+       {[1, 2, 3].map((s) => (
+         <div key={s} className={`h-1.5 flex-1 rounded-full transition-colors duration-500 ${s <= stepNum ? 'bg-[#0055FF]' : 'bg-gray-100'}`} />
+       ))}
+    </div>
+  );
+
   return (
-    <div className="min-h-[100dvh] bg-white text-black font-sans selection:bg-[#0055FF] selection:text-white flex flex-col">
+    <div className="min-h-[100dvh] bg-[#FFFFFF] text-[#0F172A] font-sans selection:bg-[#0055FF] selection:text-white flex flex-col">
       
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 px-6 py-4 flex justify-center">
-        <div className="flex items-center gap-3 px-5 py-2.5 bg-[#F4F4F5] rounded-full">
-          <span className="relative flex h-2.5 w-2.5">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100 px-6 py-4 flex justify-between items-center shadow-sm">
+        <div className="font-black text-2xl tracking-tighter text-black">OKPOS</div>
+        <div className="flex items-center gap-2 px-4 py-2 bg-blue-50/50 text-[#0055FF] rounded-full border border-blue-100">
+          <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#0055FF] opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#0055FF]"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#0055FF]"></span>
           </span>
-          <span className="text-[15px] font-bold tracking-tight text-[#0055FF]">
-            1688-4345 상담 연결 대기 중
-          </span>
+          <span className="text-sm font-bold tracking-tight">상담 대기 중</span>
         </div>
       </header>
 
-      <main className="flex-1 w-full max-w-3xl mx-auto px-6 py-12 flex flex-col relative">
-        <div className="h-12 mb-4">
+      <main className="flex-1 w-full max-w-3xl mx-auto px-6 py-8 flex flex-col relative">
+        <div className="h-14 mb-2 flex items-center">
           {currentStep !== 'hero' && currentStep !== 'result' && (
             <button 
               onClick={goBack}
-              className="flex items-center gap-1 text-gray-400 hover:text-black font-bold text-lg transition-colors active:scale-95"
+              className="flex items-center gap-1.5 text-gray-400 hover:text-black font-bold text-lg transition-colors active:scale-95 px-2 py-1 -ml-2 rounded-lg hover:bg-gray-50"
             >
-              <ChevronLeft className="w-6 h-6" /> 이전
+              <ChevronLeft className="w-6 h-6" /> 이전 단계
             </button>
           )}
         </div>
@@ -250,109 +253,117 @@ export default function App() {
         <div className="flex-1 flex flex-col relative">
           <AnimatePresence mode="wait">
             
-            {/* [Hero Screen] */}
+            {/* HERO */}
             {currentStep === 'hero' && (
               <motion.div key="hero" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col h-full justify-center pb-20">
-                <h1 className="text-5xl sm:text-6xl md:text-7xl font-black tracking-[-0.05em] leading-[1.15] mb-8 text-black break-keep">
-                  내 매장에 맞는<br />
+                <div className="inline-block p-4 bg-[#F8FAFC] rounded-3xl w-max mb-8 border border-gray-100 shadow-sm">
+                  <Store className="w-10 h-10 text-[#0055FF]" />
+                </div>
+                <h1 className="text-5xl sm:text-6xl md:text-7xl font-black tracking-[-0.05em] leading-[1.1] mb-6 text-black break-keep">
+                  매장에 맞는<br />
                   포스 구성을<br />
                   미리 찾아보세요.
                 </h1>
-                <p className="text-xl sm:text-2xl text-gray-500 font-medium tracking-tight mb-16 leading-relaxed break-keep">
+                <p className="text-xl sm:text-2xl text-gray-500 font-semibold tracking-tight mb-16 leading-relaxed break-keep">
                   선택지에 답하는 것만으로<br />
-                  가장 합리적인 구성을 도출합니다.
+                  가장 합리적인 구성을 1분 만에 도출합니다.
                 </p>
                 <button
                   onClick={() => goToStep('step1')}
-                  className="w-full h-24 bg-[#0055FF] text-white text-2xl sm:text-3xl font-black rounded-2xl active:scale-[0.98] transition-transform flex items-center justify-between px-8 shadow-[0_8px_30px_rgb(0,85,255,0.25)]"
+                  className="w-full h-24 bg-[#0F172A] hover:bg-black text-white text-2xl sm:text-3xl font-black rounded-[2rem] active:scale-[0.98] transition-all flex items-center justify-between px-8 shadow-2xl shadow-black/10 group"
                 >
                   <span>구성 찾기 시작</span>
-                  <ArrowRight className="w-8 h-8" strokeWidth={3} />
+                  <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center group-hover:bg-white/20 transition-colors">
+                    <ArrowRight className="w-6 h-6" strokeWidth={3} />
+                  </div>
                 </button>
               </motion.div>
             )}
 
-            {/* [Step 1: Industry] */}
+            {/* STEP 1 */}
             {currentStep === 'step1' && (
               <motion.div key="step1" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col pb-20">
-                <span className="text-[#0055FF] font-black text-xl mb-3 block">STEP 1</span>
+                {renderProgress(1)}
                 <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-12 break-keep text-black">어떤 형태의 매장인가요?</h2>
-                <div className="flex flex-col gap-3">
-                  {[ 
-                    { id: 'A', label: '일반 홀 운영 (식당/카페)' },
-                    { id: 'B', label: '배달 전문 (홀 없음)' },
-                    { id: 'C', label: '100% 테이크아웃' },
-                    { id: 'D', label: '유통/도소매/서비스업' },
-                    { id: 'E', label: '특수 (무인매장/팝업)' },
-                    { id: 'F', label: '단순 결제/이동형 (포스 불필요)' },
+                <div className="grid grid-cols-1 gap-4">
+                  {[
+                    { id: 'A', label: '일반 홀 운영 (식당/카페)', icon: UtensilsCrossed },
+                    { id: 'B', label: '배달 전문 (홀 없음)', icon: Box },
+                    { id: 'C', label: '100% 테이크아웃', icon: Coffee },
+                    { id: 'D', label: '유통/도소매/서비스업', icon: ShoppingBag },
+                    { id: 'E', label: '특수 (무인매장/팝업)', icon: Store },
+                    { id: 'F', label: '단순 결제/이동형 (포스 불필요)', icon: MapPin },
                   ].map((item) => (
                     <button
                       key={item.id}
                       onClick={() => handleStep1(item.id, item.label)}
-                      className="w-full min-h-[88px] bg-[#F9FAFB] border border-[#E5E7EB] hover:border-black rounded-2xl text-2xl sm:text-3xl font-bold tracking-tight text-left px-6 py-4 active:bg-gray-100 transition-colors break-keep flex items-center"
+                      className="group w-full min-h-[96px] bg-white border-2 border-[#E2E8F0] hover:border-[#0055FF] rounded-[2rem] text-xl sm:text-2xl font-black tracking-[-0.05em] text-left px-6 py-4 active:scale-[0.98] transition-all break-keep flex items-center gap-5 shadow-sm hover:shadow-md"
                     >
-                      {item.label}
+                      <div className="w-14 h-14 rounded-2xl bg-[#F8FAFC] flex items-center justify-center group-hover:bg-[#EFF6FF] transition-colors">
+                        <item.icon className="w-7 h-7 text-gray-400 group-hover:text-[#0055FF]" />
+                      </div>
+                      <span className="text-[#0F172A]">{item.label}</span>
                     </button>
                   ))}
                 </div>
               </motion.div>
             )}
 
-            {/* [Step Size: F&B Only] */}
+            {/* STEP 2 - Size */}
             {currentStep === 'stepSize' && (
               <motion.div key="stepSize" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col pb-20">
-                <span className="text-[#0055FF] font-black text-xl mb-3 block">STEP 2</span>
+                {renderProgress(2)}
                 <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-12 break-keep text-black">매장의 규모는 어느 정도인가요?</h2>
                 <div className="flex flex-col gap-4">
                   <button
                     onClick={() => handleStepSize('소형/중형 매장 (테이블 15개 미만)')}
-                    className="w-full bg-[#F9FAFB] border border-[#E5E7EB] hover:border-black rounded-2xl text-left px-6 py-8 active:bg-gray-100 transition-colors flex flex-col gap-2"
+                    className="w-full bg-white border-2 border-[#E2E8F0] hover:border-[#0055FF] rounded-[2rem] text-left px-8 py-10 active:scale-[0.98] transition-all flex flex-col gap-3 shadow-sm hover:shadow-md"
                   >
                     <span className="text-3xl font-black tracking-tight text-black">소형/중형 매장</span>
-                    <span className="text-lg text-gray-500 font-medium">테이블 15개 미만</span>
+                    <span className="text-lg text-gray-500 font-semibold">테이블 15개 미만으로 비교적 동선이 짧음</span>
                   </button>
                   <button
                     onClick={() => handleStepSize('대형 매장 (테이블 15개 이상)')}
-                    className="w-full bg-[#F9FAFB] border border-[#E5E7EB] hover:border-black rounded-2xl text-left px-6 py-8 active:bg-gray-100 transition-colors flex flex-col gap-2"
+                    className="w-full bg-white border-2 border-[#E2E8F0] hover:border-[#0055FF] rounded-[2rem] text-left px-8 py-10 active:scale-[0.98] transition-all flex flex-col gap-3 shadow-sm hover:shadow-md"
                   >
                     <span className="text-3xl font-black tracking-tight text-black">대형 매장</span>
-                    <span className="text-lg text-gray-500 font-medium">테이블 15개 이상 (직원 동선 김)</span>
+                    <span className="text-lg text-gray-500 font-semibold">테이블 15개 이상으로 직원 이동 동선이 김</span>
                   </button>
                 </div>
               </motion.div>
             )}
 
-            {/* [Step 2A: F&B Operation] */}
+            {/* STEP 2A */}
             {currentStep === 'step2A' && (
               <motion.div key="step2A" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col pb-20">
-                <span className="text-[#0055FF] font-black text-xl mb-3 block">STEP 3</span>
+                {renderProgress(2)}
                 <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-12 break-keep text-black">결제는 언제 이루어지나요?</h2>
                 <div className="flex flex-col gap-4">
                   <button
                     onClick={() => handleStep2A('선불형')}
-                    className="w-full bg-[#F9FAFB] border border-[#E5E7EB] hover:border-black rounded-2xl text-left px-6 py-8 active:bg-gray-100 transition-colors flex flex-col gap-2"
+                    className="w-full bg-white border-2 border-[#E2E8F0] hover:border-[#0055FF] rounded-[2rem] text-left px-8 py-10 active:scale-[0.98] transition-all flex flex-col gap-3 shadow-sm hover:shadow-md"
                   >
                     <span className="text-3xl font-black tracking-tight text-black">선불형</span>
-                    <span className="text-lg text-gray-500 font-medium">카운터에서 주문과 동시에 결제</span>
+                    <span className="text-lg text-gray-500 font-semibold">고객이 카운터에서 주문과 동시에 결제</span>
                   </button>
                   <button
                     onClick={() => handleStep2A('후불형')}
-                    className="w-full bg-[#F9FAFB] border border-[#E5E7EB] hover:border-black rounded-2xl text-left px-6 py-8 active:bg-gray-100 transition-colors flex flex-col gap-2"
+                    className="w-full bg-white border-2 border-[#E2E8F0] hover:border-[#0055FF] rounded-[2rem] text-left px-8 py-10 active:scale-[0.98] transition-all flex flex-col gap-3 shadow-sm hover:shadow-md"
                   >
                     <span className="text-3xl font-black tracking-tight text-black">후불형</span>
-                    <span className="text-lg text-gray-500 font-medium">식사 후 나갈 때 일괄 결제</span>
+                    <span className="text-lg text-gray-500 font-semibold">고객이 식사를 마친 후 나갈 때 일괄 결제</span>
                   </button>
                 </div>
               </motion.div>
             )}
 
-            {/* [Step 2B: Retail/Service] */}
+            {/* STEP 2B */}
             {currentStep === 'step2B' && (
               <motion.div key="step2B" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col pb-20">
-                <span className="text-[#0055FF] font-black text-xl mb-3 block">STEP 2</span>
+                {renderProgress(2)}
                 <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-12 break-keep text-black">특수 운영 조건이 있나요?</h2>
-                <div className="flex flex-col gap-3">
-                  {[ 
+                <div className="flex flex-col gap-4">
+                  {[
                     { id: '바코드', label: '상품 바코드 스캔 위주' },
                     { id: '저울', label: '저울 연동 필수 (정육/수산)' },
                     { id: 'PC연동', label: '기존 PC 프로그램 연동' },
@@ -361,7 +372,7 @@ export default function App() {
                     <button
                       key={item.id}
                       onClick={() => handleStep2B(item.label)}
-                      className="w-full min-h-[88px] bg-[#F9FAFB] border border-[#E5E7EB] hover:border-black rounded-2xl text-2xl font-bold tracking-tight text-left px-6 py-4 active:bg-gray-100 transition-colors break-keep flex items-center"
+                      className="w-full min-h-[96px] bg-white border-2 border-[#E2E8F0] hover:border-[#0055FF] rounded-[2rem] text-2xl font-black tracking-[-0.05em] text-left px-8 active:scale-[0.98] transition-all break-keep flex items-center shadow-sm hover:shadow-md text-[#0F172A]"
                     >
                       {item.label}
                     </button>
@@ -370,10 +381,10 @@ export default function App() {
               </motion.div>
             )}
 
-            {/* [Step 2C: Simple/Mobile Payment] */}
+            {/* STEP 2C */}
             {currentStep === 'step2C' && (
               <motion.div key="step2C" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col pb-20">
-                <span className="text-[#0055FF] font-black text-xl mb-3 block">STEP 2</span>
+                {renderProgress(2)}
                 <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-12 break-keep text-black">주로 어디서 결제가 이루어지나요?</h2>
                 <div className="flex flex-col gap-4">
                   <button
@@ -381,34 +392,34 @@ export default function App() {
                       setSelections(prev => ({ ...prev, special: '고정카운터 단독결제' }));
                       calculateResult('F1');
                     }}
-                    className="w-full bg-[#F9FAFB] border border-[#E5E7EB] hover:border-black rounded-2xl text-left px-6 py-8 active:bg-gray-100 transition-colors flex flex-col gap-2"
+                    className="w-full bg-white border-2 border-[#E2E8F0] hover:border-[#0055FF] rounded-[2rem] text-left px-8 py-10 active:scale-[0.98] transition-all flex flex-col gap-3 shadow-sm hover:shadow-md"
                   >
                     <span className="text-2xl sm:text-3xl font-black tracking-tight text-black break-keep">매장 내 고정된 카운터</span>
-                    <span className="text-base sm:text-lg text-gray-500 font-medium break-keep">단순 결제와 영수증 출력만 필요함</span>
+                    <span className="text-base sm:text-lg text-gray-500 font-semibold break-keep">단순 결제와 영수증 출력만 필요함</span>
                   </button>
                   <button
                     onClick={() => {
                       setSelections(prev => ({ ...prev, special: '무선/이동 결제' }));
                       calculateResult('F2');
                     }}
-                    className="w-full bg-[#F9FAFB] border border-[#E5E7EB] hover:border-black rounded-2xl text-left px-6 py-8 active:bg-gray-100 transition-colors flex flex-col gap-2"
+                    className="w-full bg-white border-2 border-[#E2E8F0] hover:border-[#0055FF] rounded-[2rem] text-left px-8 py-10 active:scale-[0.98] transition-all flex flex-col gap-3 shadow-sm hover:shadow-md"
                   >
                     <span className="text-2xl sm:text-3xl font-black tracking-tight text-black break-keep">야외, 플리마켓, 배달 등</span>
-                    <span className="text-base sm:text-lg text-gray-500 font-medium break-keep">이동이 잦아 무선 결제가 필수임</span>
+                    <span className="text-base sm:text-lg text-gray-500 font-semibold break-keep">이동이 잦아 무선 결제가 필수임</span>
                   </button>
                 </div>
               </motion.div>
             )}
 
-            {/* [Step 3: Hardware Options] */}
+            {/* STEP 3 - Hardware */}
             {currentStep === 'step3' && (
               <motion.div key="step3" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col pb-20">
-                <span className="text-[#0055FF] font-black text-xl mb-3 block">마지막 단계 (선택)</span>
+                {renderProgress(3)}
                 <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-4 break-keep text-black">추가 옵션을 골라주세요.</h2>
-                <p className="text-xl text-gray-500 font-medium mb-10">해당 없으면 바로 넘어가세요.</p>
+                <p className="text-xl text-gray-500 font-bold mb-10">해당 없으면 바로 넘어가세요.</p>
                 
-                <div className="flex flex-col gap-3 mb-12">
-                  {[ 
+                <div className="flex flex-col gap-4 mb-12">
+                  {[
                     { id: 'dual', label: '고객용 결제 화면(듀얼모니터) 필요' },
                     { id: 'printer', label: '주방이 멀어 주방프린터 필요' },
                     { id: 'kds', label: '주방에 종이 대신 모니터(KDS) 필요' },
@@ -419,12 +430,12 @@ export default function App() {
                         key={hw.id}
                         onClick={() => toggleHardware(hw.id)}
                         className={cn(
-                          "w-full min-h-[96px] border rounded-2xl text-left px-6 py-4 active:scale-[0.98] transition-all flex items-center gap-4",
-                          isSelected ? "bg-black border-black text-white" : "bg-[#F9FAFB] border-[#E5E7EB] hover:border-black text-black"
+                          "w-full min-h-[104px] border-2 rounded-[2rem] text-left px-8 py-4 active:scale-[0.98] transition-all flex items-center gap-5 shadow-sm hover:shadow-md",
+                          isSelected ? "bg-[#0F172A] border-[#0F172A] text-white" : "bg-white border-[#E2E8F0] hover:border-[#0055FF] text-[#0F172A]"
                         )}
                       >
-                        {isSelected ? <CheckSquare className="w-7 h-7 text-[#0055FF] flex-shrink-0" /> : <Square className="w-7 h-7 text-gray-400 flex-shrink-0" />}
-                        <span className="text-xl sm:text-2xl font-bold tracking-tight break-keep">{hw.label}</span>
+                        {isSelected ? <CheckSquare className="w-8 h-8 text-[#0055FF] flex-shrink-0" /> : <Square className="w-8 h-8 text-gray-300 flex-shrink-0" />}
+                        <span className="text-xl sm:text-2xl font-black tracking-tight break-keep">{hw.label}</span>
                       </button>
                     );
                   })}
@@ -432,87 +443,81 @@ export default function App() {
 
                 <button
                   onClick={() => calculateResult('complex')}
-                  className="w-full h-20 bg-black text-white text-2xl font-black rounded-2xl active:bg-gray-800 transition-colors"
+                  className="w-full h-24 bg-[#0F172A] hover:bg-black text-white text-2xl font-black rounded-[2rem] active:scale-[0.98] transition-transform shadow-xl"
                 >
-                  조합 완료
+                  조합 완료하고 결과 보기
                 </button>
               </motion.div>
             )}
 
-            {/* [Result Screen] */}
+            {/* RESULT */}
             {currentStep === 'result' && (
-              <motion.div key="result" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col pb-20">
-                <div className="flex items-center gap-3 mb-8">
-                  <CheckCircle2 className="w-10 h-10 text-[#0055FF]" strokeWidth={3} />
-                  <h2 className="text-3xl font-black tracking-tight text-black">분석 완료</h2>
-                </div>
+              <motion.div key="result" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col pb-20 pt-8">
                 
-                <h3 className="text-3xl sm:text-4xl font-black text-black mb-8 tracking-[-0.05em] break-keep leading-tight">
-                  {result.title}
-                </h3>
-                
-                {/* 캡처 대상 영역 (Result Card) */}
-                <div 
-                  ref={captureRef}
-                  className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-3xl p-6 sm:p-10 mb-6"
-                >
-                  {/* 선택 요약 배지 */}
+                <div ref={captureRef} className="bg-white rounded-[2.5rem] p-6 sm:p-10 mb-8 border border-gray-100 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] relative overflow-hidden">
+                  {/* Decorative Background Element */}
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full blur-3xl -z-10 translate-x-1/2 -translate-y-1/2 opacity-60"></div>
+                  
+                  <div className="flex items-center gap-3 mb-10">
+                    <div className="w-12 h-12 rounded-full bg-[#0055FF]/10 flex items-center justify-center">
+                      <CheckCircle2 className="w-7 h-7 text-[#0055FF]" strokeWidth={2.5} />
+                    </div>
+                    <h2 className="text-2xl font-black tracking-tight text-black">분석 완료</h2>
+                  </div>
+
                   {result.summaryText && (
-                    <div className="mb-6 inline-flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-xl text-sm font-bold text-gray-600 border border-gray-200 break-all">
-                      <Info className="w-4 h-4 flex-shrink-0" />
-                      <span>선택 조건: {result.summaryText}</span>
+                    <div className="mb-10 inline-flex items-start sm:items-center gap-2.5 bg-[#F8FAFC] px-5 py-3.5 rounded-2xl text-sm sm:text-base font-bold text-gray-600 border border-[#E2E8F0] break-keep">
+                      <Info className="w-5 h-5 flex-shrink-0 text-[#0055FF] mt-0.5 sm:mt-0" />
+                      <span className="leading-snug">선택 조건: {result.summaryText}</span>
                     </div>
                   )}
 
-                  {/* 기본 세트 */}
-                  <div className="mb-8">
-                    <span className="text-[#0055FF] font-black text-sm mb-3 block border-b border-gray-200 pb-2">기본 구성품</span>
-                    <div className="flex flex-col gap-3">
+                  <div className="mb-10">
+                    <span className="text-[#0055FF] font-black text-sm mb-4 block border-b border-gray-100 pb-3 tracking-widest">기본 구성품</span>
+                    <div className="flex flex-col gap-4">
                       {result.basic.map((item, idx) => (
-                        <div key={idx} className="flex items-start gap-3">
-                          <span className="w-2 h-2 rounded-full bg-black flex-shrink-0 mt-2.5"></span>
-                          <span className="text-2xl font-black text-black tracking-[-0.05em] leading-tight break-keep">{item}</span>
+                        <div key={idx} className="flex items-start gap-4">
+                          <span className="w-2.5 h-2.5 rounded-full bg-[#0F172A] flex-shrink-0 mt-2.5"></span>
+                          <span className="text-2xl font-black text-[#0F172A] tracking-[-0.05em] leading-tight break-keep">{item}</span>
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  {/* 추가 세트 */}
                   {result.additional.length > 0 && (
-                    <div className="mb-8">
-                      <span className="text-[#0055FF] font-black text-sm mb-3 block border-b border-gray-200 pb-2">추가 구성품 및 서비스</span>
-                      <div className="flex flex-col gap-3">
+                    <div className="mb-10">
+                      <span className="text-[#0055FF] font-black text-sm mb-4 block border-b border-gray-100 pb-3 tracking-widest">추가 구성품 및 서비스</span>
+                      <div className="flex flex-col gap-4">
                         {result.additional.map((item, idx) => (
-                          <div key={idx} className="flex items-start gap-3">
-                            <span className="w-2 h-2 rounded-full bg-gray-400 flex-shrink-0 mt-2.5"></span>
-                            <span className="text-2xl font-black text-gray-700 tracking-[-0.05em] leading-tight break-keep">{item}</span>
+                          <div key={idx} className="flex items-start gap-4">
+                            <span className="w-2.5 h-2.5 rounded-full bg-[#94A3B8] flex-shrink-0 mt-2.5"></span>
+                            <span className="text-2xl font-black text-[#475569] tracking-[-0.05em] leading-tight break-keep">{item}</span>
                           </div>
                         ))}
                       </div>
                     </div>
                   )}
 
-                  <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-                    <p className="text-base sm:text-lg text-gray-600 font-medium leading-relaxed break-keep">
+                  <div className="bg-[#F8FAFC] rounded-3xl p-6 sm:p-8 border border-[#E2E8F0]">
+                    <p className="text-base sm:text-lg text-[#334155] font-semibold leading-relaxed break-keep">
                       {result.reason}
                     </p>
                   </div>
 
-                  <div className="mt-6 flex items-start gap-2 text-gray-400">
-                     <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                     <p className="text-xs font-medium leading-relaxed break-keep">
-                       본 추천 구성은 고객님의 선택에 기반한 참고용입니다. 실제 상담 시 매장 환경에 따라 더욱 최적화된 기기와 서비스가 안내될 수 있습니다.
+                  <div className="mt-8 flex items-start gap-2.5 text-[#94A3B8] bg-gray-50/50 p-4 rounded-xl">
+                     <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                     <p className="text-xs sm:text-sm font-semibold leading-relaxed break-keep">
+                       본 구성은 참고용이며, 실제 상담 시 환경에 따라 최적화된 기기가 재안내될 수 있습니다.
                      </p>
                   </div>
                 </div>
 
-                {/* Additional Recommendation */}
                 {selections.type !== 'F' && (
-                  <div className="bg-blue-50/50 border border-blue-100 rounded-3xl p-6 sm:p-8 mb-12">
-                    <span className="text-[#0055FF] font-black text-sm mb-2 block">+ 강력 추천 소프트웨어</span>
-                    <h4 className="text-xl sm:text-2xl font-black tracking-tight mb-2 text-black">단골플러스 & 오늘얼마</h4>
-                    <p className="text-gray-600 font-medium text-base leading-relaxed break-keep">
-                      포인트 적립(CRM)과 실시간 모바일 매출 관리 환경을 구축하세요.
+                  <div className="bg-gradient-to-br from-blue-50 to-[#EFF6FF] border border-blue-100/50 rounded-[2.5rem] p-8 sm:p-10 mb-12 shadow-sm">
+                    <span className="inline-block px-3 py-1 bg-[#0055FF]/10 text-[#0055FF] font-black text-xs rounded-lg mb-4 tracking-widest">추천 소프트웨어</span>
+                    <h4 className="text-2xl sm:text-3xl font-black tracking-tight mb-3 text-[#0F172A]">단골플러스 & 오늘얼마</h4>
+                    <p className="text-[#475569] font-medium text-lg leading-relaxed break-keep">
+                      가볍게 도입하여 포인트 적립(CRM)과 실시간 모바일 매출 관리 환경을 구축하세요.
                     </p>
                   </div>
                 )}
@@ -520,9 +525,9 @@ export default function App() {
                 <div className="flex flex-col gap-4">
                   <button
                     onClick={handleCapture}
-                    className="w-full h-20 bg-[#0055FF] hover:bg-blue-700 text-white text-2xl font-black rounded-2xl active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-[0_8px_30px_rgb(0,85,255,0.25)]"
+                    className="w-full h-24 bg-[#0055FF] hover:bg-blue-700 text-white text-xl sm:text-2xl font-black rounded-[2rem] active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-[0_8px_30px_rgb(0,85,255,0.25)]"
                   >
-                    <Download className="w-6 h-6" />
+                    <Download className="w-7 h-7" />
                     결과 화면 캡처하고 상담하기
                   </button>
                   <button 
@@ -531,7 +536,7 @@ export default function App() {
                       setCurrentStep('hero');
                       setHistory([]);
                     }} 
-                    className="w-full h-16 text-gray-500 font-bold text-lg hover:text-black transition-colors"
+                    className="w-full h-16 text-[#64748B] font-bold text-lg hover:text-[#0F172A] transition-colors"
                   >
                     조건 다시 선택하기
                   </button>
@@ -543,39 +548,39 @@ export default function App() {
         </div>
       </main>
 
-      <footer className="bg-[#F9FAFB] border-t border-[#E5E7EB] pt-24 pb-32 px-6">
+      <footer className="bg-[#F8FAFC] border-t border-[#E2E8F0] pt-24 pb-32 px-6 mt-auto">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-4xl font-black tracking-tight mb-16 text-black">도입 진행 절차</h2>
+          <h2 className="text-3xl sm:text-4xl font-black tracking-tight mb-16 text-[#0F172A]">도입 진행 절차</h2>
           <div className="flex flex-col gap-12 mb-32">
             {PROCESS.map((p) => (
-              <div key={p.step} className="flex gap-6">
-                <div className="text-5xl font-black text-gray-300 tracking-tighter shrink-0 w-16">
+              <div key={p.step} className="flex gap-6 sm:gap-8">
+                <div className="text-5xl sm:text-6xl font-black text-[#CBD5E1] tracking-tighter shrink-0 w-16 sm:w-20">
                   {p.step}
                 </div>
-                <div className="pt-1">
-                  <h3 className="text-2xl font-black tracking-tight mb-2 text-black">{p.title}</h3>
-                  <p className="text-lg text-gray-500 font-medium leading-relaxed break-keep">{p.desc}</p>
+                <div className="pt-2">
+                  <h3 className="text-2xl font-black tracking-tight mb-2 text-[#0F172A]">{p.title}</h3>
+                  <p className="text-lg text-[#64748B] font-semibold leading-relaxed break-keep">{p.desc}</p>
                 </div>
               </div>
             ))}
           </div>
 
-          <h2 className="text-4xl font-black tracking-tight mb-8 text-black">공식 채널</h2>
-          <div className="flex flex-col">
-            {LINKS.map((link) => (
+          <h2 className="text-3xl sm:text-4xl font-black tracking-tight mb-8 text-[#0F172A]">공식 채널</h2>
+          <div className="flex flex-col bg-white rounded-[2rem] border border-[#E2E8F0] overflow-hidden shadow-sm">
+            {LINKS.map((link, idx) => (
               <a 
                 key={link.label} 
                 href={link.url} 
                 target="_blank" 
                 rel="noreferrer"
-                className="py-6 border-b border-gray-200 text-2xl font-black tracking-tight text-gray-600 hover:text-[#0055FF] transition-colors flex items-center justify-between"
+                className={`py-6 px-8 text-xl font-black tracking-tight text-[#334155] hover:text-[#0055FF] hover:bg-[#F8FAFC] transition-colors flex items-center justify-between ${idx !== LINKS.length - 1 ? 'border-b border-[#E2E8F0]' : ''}`}
               >
                 <span>{link.label}</span>
-                <ArrowRight className="w-6 h-6" />
+                <ArrowRight className="w-6 h-6 text-[#94A3B8]" />
               </a>
             ))}
           </div>
-          <div className="mt-20 text-gray-400 font-bold">
+          <div className="mt-16 text-[#94A3B8] font-bold text-center">
             © OKPOS. All rights reserved.
           </div>
         </div>
