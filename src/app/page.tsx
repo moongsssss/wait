@@ -119,8 +119,8 @@ export default function App() {
     } else if (flow === 'complex') {
       if (selections.type === 'A') {
         if (selections.operation === '선불형') {
-          additionalItems.push('일반 키오스크', '또는 네이버 커넥트 단말기 키오스크 모드');
-          reasonText = '바쁜 카운터 업무 분산을 위해 키오스크 도입을 추천합니다. 일반 키오스크 기기가 부담스럽다면, 기본 제공되는 커넥트 단말기를 키오스크 모드로 즉시 전환하여 사용할 수 있습니다.';
+          additionalItems.push('일반 키오스크', '또는 QR오더 키오스크 모드 (스티커 부착형)', '또는 네이버 커넥트 단말기 키오스크 모드');
+          reasonText = '바쁜 카운터 업무 분산을 위해 키오스크 도입을 추천합니다. 공간이나 비용이 부담스럽다면 스티커 부착형 QR오더를 키오스크로 활용하거나, 기본 제공되는 커넥트 단말기를 키오스크 모드로 즉시 전환하여 사용할 수 있습니다.';
         } else if (selections.operation === '후불형') {
           additionalItems.push('QR오더 (테이블오더 대체)', '오더포스 (직원용 주문기)');
           reasonText = '고가의 테이블오더 태블릿 대신, 고객 휴대폰을 활용하는 QR오더를 도입해 초기 비용을 대폭 절감하세요. 주문은 포스로 즉시 전송되어 누락 없는 후불 결제가 가능합니다.';
