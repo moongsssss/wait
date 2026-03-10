@@ -527,6 +527,7 @@ export default function App() {
                   </button>
                   <button 
                     onClick={() => {
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
                       setCurrentStep('hero');
                       setHistory([]);
                     }} 
