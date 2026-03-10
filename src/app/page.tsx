@@ -96,56 +96,55 @@ export default function RecommendationEngine() {
   };
 
   const calculateResult = (flow: string) => {
-    let baseItems = ['포스 1세트', '네이버 커넥트 단말기'];
+    let baseItems = ['포스 1세트', '네이버 커넥트 단말기 (필수)'];
     let reasonText = '';
 
     if (flow === 'B') { // 배달 전문
       baseItems.push('배달매니저', '주방프린터');
-      reasonText = '다중 플랫폼 앱 대신 배달매니저 하나로 통합 관리하고, 프린터로 동선을 최소화하세요.';
+      reasonText = '배달 앱들을 일일이 확인할 필요 없이 배달매니저 하나로 통합하세요. 네이버 커넥트 단말기는 공간을 거의 차지하지 않으면서도 강력한 결제 성능을 제공합니다.';
     } else if (flow === 'C') { // 테이크아웃
-      baseItems.push('QR오더(키오스크 모드) OR 듀얼모니터');
-      reasonText = '비좁은 공간에 최적화된 미니 키오스크 환경을 구축하여 회전율을 높이세요.';
+      baseItems.push('QR오더 (키오스크 모드)');
+      reasonText = '비싼 키오스크 하드웨어 대신, 네이버 커넥트 단말기와 QR오더를 키오스크 모드로 연동하세요. 좁은 매장에서도 고객이 직접 주문하고 결제하는 스마트한 환경이 구축됩니다.';
     } else if (flow === 'E') { // 특수 매장
       baseItems = ['정밀 진단 후 맞춤 구성 안내'];
-      reasonText = '무인 매장(셀프 계산대)이나 단기 팝업(이동형 단말기)은 환경에 따라 구성이 완전히 달라지므로 전문 상담원의 정밀 진단을 진행합니다.';
+      reasonText = '무인 매장이나 팝업스토어는 환경에 따라 변수가 많습니다. 네이버 커넥트 단말기의 키오스크 모드 활용 가능 여부를 포함하여 전문 상담원이 정밀 진단을 진행합니다.';
     } else if (flow === 'complex') { // Step 3까지 진행된 복합 로직
-      // 1. 기본 장비 세팅
       if (selections.type === 'A') { // 요식업
         if (selections.operation === '선불형') {
-          baseItems.push('키오스크');
-          reasonText = '카운터 결제 집중을 막기 위해 키오스크를 도입하여 인건비를 절감하세요. ';
+          baseItems.push('키오스크 (또는 커넥트 단말기 키오스크 모드)');
+          reasonText = '바쁜 카운터 업무를 분산시키기 위해 키오스크 도입을 추천합니다. 별도 키오스크가 부담스럽다면 네이버 커넥트 단말기를 키오스크 모드로 즉시 전환하여 사용할 수 있습니다. ';
         } else if (selections.operation === '후불형') {
-          baseItems.push('QR오더', '오더포스(직원용 주문기)');
-          reasonText = '후불형 매장은 특성상 키오스크가 부적합합니다. 대신 테이블에 QR오더를 부착하여 주문 누락을 막으세요. ';
+          baseItems.push('QR오더 (테이블오더 대체)', '오더포스');
+          reasonText = '고가의 테이블오더 태블릿 대신, 고객 휴대폰을 활용하는 QR오더를 도입해 초기 비용을 90% 이상 절감하세요. 주문은 포스로 즉시 전송되어 누락 없는 후불 결제가 가능해집니다. ';
         }
       } else if (selections.type === 'D') { // 유통/서비스
         if (selections.special === '바코드') {
-          baseItems = ['유통 전용 포스', '바코드 스캐너', '네이버 커넥트 단말기'];
-          reasonText = '방대한 상품 관리와 빠른 바코드 스캔 결제에 최적화된 유통 전용 세트입니다. ';
+          baseItems = ['유통 전용 포스', '네이버 커넥트 단말기 (필수)', '바코드 스캐너'];
+          reasonText = '방대한 재고 관리와 빠른 바코드 스캔 결제에 최적화된 세트입니다. 네이버 커넥트 단말기는 어떠한 유통 환경에서도 가장 빠르고 안정적인 승인을 보장합니다. ';
         } else if (selections.special === '저울') {
-          baseItems = ['유통 포스', '바코드 스캐너', '저울 연동 지원 모델(상담필수)', '네이버 커넥트 단말기'];
-          reasonText = '중량에 따른 가격 계산이 필수이므로, 저울 연동이 완벽하게 지원되는 특수 모델로 구성됩니다. ';
+          baseItems = ['유통 포스', '네이버 커넥트 단말기 (필수)', '저울 연동 지원 모델', '바코드 스캐너'];
+          reasonText = '중량당 가격 계산이 필수적인 환경에 맞춰 저울 연동이 검증된 모델로 구성됩니다. ';
         } else if (selections.special === 'PC연동') {
-          baseItems = ['베이직 포스', 'PC 연동 결제 단말기'];
-          reasonText = '사용 중이신 미용/예약 프로그램과의 호환성을 먼저 테스트한 후 PC 연동 단말기를 세팅합니다. ';
+          baseItems = ['베이직 포스', '네이버 커넥트 단말기 (PC 연동 모드)'];
+          reasonText = '미용실이나 스크린골프 등 기존 PC 프로그램을 쓰신다면, 네이버 커넥트 단말기를 PC와 직접 연동하여 이중 결제 작업 없이 한 번에 처리하세요. ';
         } else if (selections.special === '이동결제') {
-          baseItems = ['스마트폰 블루투스 단말기 OR 무선 통신형 단말기'];
-          reasonText = '출장이나 외부 결제가 잦으시다면 유지비가 없는 블루투스형 또는 속도가 빠른 무선 통신형 중 유리한 것을 추천해 드립니다. ';
+          baseItems = ['스마트폰 블루투스 단말기 OR 통신형 무선단말기'];
+          reasonText = '이동 결제가 잦은 경우 휴대성을 극대화한 전용 단말기를 추천해 드립니다. ';
         }
       }
 
       // 2. 하드웨어 옵션 추가 (Step 3)
       if (selections.hardware.includes('dual')) {
         baseItems.push('듀얼모니터');
-        reasonText += '또한 듀얼모니터를 통해 고객에게 신뢰감을 주고 결제 내역을 투명하게 안내할 수 있습니다.';
+        reasonText += ' 또한 고객용 듀얼모니터를 추가하여 주문 내역을 실시간으로 공유하면 신뢰도가 더욱 상승합니다.';
       }
       if (selections.hardware.includes('printer')) {
         if (!baseItems.includes('주방프린터')) baseItems.push('주방프린터');
-        reasonText += ' 주방이나 다른 층으로 전표를 즉시 전송하여 직원 동선을 획기적으로 줄여줍니다.';
+        reasonText += ' 주방프린터는 홀과 주방의 물리적 거리를 극복하고 조리 누락을 방지하는 필수 옵션입니다.';
       }
       if (selections.hardware.includes('kds')) {
         baseItems.push('KDS (주방 디스플레이)');
-        reasonText += ' 종이 영수증 분실 위험 없이 KDS 화면을 통해 정확하고 깨끗한 주방 환경을 만듭니다.';
+        reasonText += ' 종이 영수증이 필요 없는 KDS를 도입하여 더 깨끗하고 스마트한 주방 환경을 만드세요.';
       }
     }
 
