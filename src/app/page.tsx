@@ -24,15 +24,16 @@ const FAQS = [
   { q: "약정 기간 내 해지 시 위약금이 발생합니까?", a: "약정 조건에 따라 위약금이 발생할 수 있으며, 계약 시 투명하게 고지합니다." }
 ];
 
-const LINKS = {
-  mall: "https://www.okposmall.co.kr/",
-  store: "https://smartstore.naver.com/tpay",
-  insta: "#",
-  youtube: "#",
-  blog: "#"
-};
+const TABS = [
+  { id: 'hero', label: '시작하기' },
+  { id: 'industry', label: '업종별 솔루션' },
+  { id: 'checklist', label: '환경 분석' },
+  { id: 'process', label: '도입 절차' },
+  { id: 'faq', label: 'FAQ' }
+];
 
 export default function Home() {
+  const [activeTab, setActiveTab] = useState('hero');
   const [step, setStep] = useState(1);
   const [checklist, setChecklist] = useState({ type: '', features: [] as string[] });
 
@@ -49,68 +50,105 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFFFFF] text-[#111111] font-sans antialiased pb-24 selection:bg-[#0066FF] selection:text-white">
+    <div className="min-h-screen bg-[#FFFFFF] text-[#111111] font-sans antialiased flex flex-col selection:bg-[#0066FF] selection:text-white overflow-hidden">
       
-      {/* Navbar */}
-      <nav className="flex items-center justify-between px-6 py-8 border-b border-gray-100">
-        <div className="font-black text-3xl tracking-tighter">OKPOS</div>
-        <div className="hidden md:flex gap-8 text-sm font-bold text-gray-400">
-          <a href={LINKS.mall} target="_blank" rel="noreferrer" className="hover:text-[#111111] transition-colors">공식몰</a>
-          <a href={LINKS.store} target="_blank" rel="noreferrer" className="hover:text-[#111111] transition-colors">스마트스토어</a>
+      {/* Top Navigation Bar */}
+      <nav className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-gray-100 z-50">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <div 
+            className="font-black text-2xl tracking-tighter cursor-pointer"
+            onClick={() => setActiveTab('hero')}
+          >
+            OKPOS
+          </div>
+          
+          {/* Desktop Menu */}
+          <div className="hidden md:flex gap-8">
+            {TABS.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`text-lg font-bold tracking-tight transition-colors ${
+                  activeTab === tab.id ? 'text-[#0066FF]' : 'text-gray-400 hover:text-[#111111]'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="md:hidden text-[#0066FF] font-bold">
+             상담 대기 중
+          </div>
+        </div>
+        
+        {/* Mobile Menu Scrollable */}
+        <div className="md:hidden flex overflow-x-auto px-6 py-3 gap-6 hide-scrollbar border-t border-gray-50">
+           {TABS.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`text-sm font-bold tracking-tight whitespace-nowrap transition-colors ${
+                  activeTab === tab.id ? 'text-[#0066FF]' : 'text-gray-400'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="px-6 py-32 md:py-48 flex flex-col items-center justify-center text-center">
-        <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full border border-gray-200 bg-gray-50 text-sm font-bold text-[#0066FF] mb-12">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#0066FF] animate-pulse"></span>
-          상담 대기 중
-        </div>
-        <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-[-0.05em] leading-[1.05] text-[#111111] mb-10 break-keep">
-          매장에 맞는 구성을<br />먼저 확인해보세요.
-        </h1>
-        <p className="text-2xl md:text-3xl text-gray-400 font-semibold tracking-tight max-w-3xl leading-snug">
-          상담 전 핵심 정보를 입력하시면,<br className="hidden md:block"/>
-          이탈 없이 빠르고 정확한 안내가 가능합니다.
-        </p>
-      </section>
-
-      {/* Industry Selector */}
-      <section className="px-6 py-32 md:py-48 bg-[#F9F9F9]">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-5xl md:text-7xl font-black tracking-[-0.05em] mb-24 text-center">
-            어떤 업종을 준비하십니까.
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-0 border border-gray-200 bg-white">
-            {INDUSTRIES.map((item, idx) => (
-              <div key={item.id} className={`p-12 md:p-16 hover:bg-[#111111] hover:text-white transition-colors duration-300 group cursor-pointer ${idx !== 0 ? 'border-t md:border-t-0 md:border-l border-gray-200' : ''}`}>
-                <h3 className="text-4xl font-black tracking-[-0.05em] mb-6">{item.name}</h3>
-                <p className="text-gray-500 group-hover:text-gray-300 font-semibold text-xl leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
+      {/* Main Content Area (Click based) */}
+      <main className="flex-1 pt-32 pb-32 flex flex-col justify-center items-center px-6 animate-in fade-in zoom-in-95 duration-300">
+        
+        {activeTab === 'hero' && (
+          <div className="w-full max-w-5xl text-center space-y-12">
+            <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full border border-gray-200 bg-gray-50 text-sm font-bold text-[#0066FF] mx-auto">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#0066FF] animate-pulse"></span>
+              현재 상담 대기 중입니다
+            </div>
+            <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-[-0.05em] leading-[1.05] text-[#111111] break-keep">
+              매장에 맞는 구성을<br />먼저 확인해보세요.
+            </h1>
+            <p className="text-2xl md:text-3xl text-gray-400 font-semibold tracking-tight leading-snug">
+              위 메뉴를 클릭하여 핵심 정보를 확인하시면,<br className="hidden md:block"/>
+              연결 즉시 가장 정확한 안내를 받으실 수 있습니다.
+            </p>
+            <div className="pt-10">
+              <button 
+                onClick={() => setActiveTab('checklist')}
+                className="px-12 py-6 bg-[#111111] text-white text-2xl font-black tracking-tight hover:bg-[#0066FF] transition-colors"
+              >
+                환경 분석 시작하기
+              </button>
+            </div>
           </div>
-        </div>
-      </section>
+        )}
 
-      {/* Interactive Checklist */}
-      <section className="px-6 py-32 md:py-48 bg-[#111111] text-white">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-24">
-            <h2 className="text-5xl md:text-7xl font-black tracking-[-0.05em] mb-8">
-              도입 환경 분석.
+        {activeTab === 'industry' && (
+          <div className="w-full max-w-7xl">
+            <h2 className="text-5xl md:text-7xl font-black tracking-[-0.05em] mb-16 text-center">
+              어떤 업종을 준비하십니까.
             </h2>
-            <p className="text-2xl text-gray-400 font-bold tracking-tight">단 3단계로 매장의 요구사항을 파악합니다.</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {INDUSTRIES.map((item) => (
+                <div key={item.id} className="p-12 md:p-16 border-2 border-gray-100 hover:border-[#111111] transition-colors group cursor-pointer bg-white">
+                  <h3 className="text-4xl font-black tracking-[-0.05em] mb-6 text-[#111111]">{item.name}</h3>
+                  <p className="text-gray-500 font-semibold text-xl leading-relaxed">{item.desc}</p>
+                </div>
+              ))}
+            </div>
           </div>
+        )}
 
-          <div className="bg-[#181818] p-10 md:p-20 border border-[#333]">
-            {/* Progress Bar */}
+        {activeTab === 'checklist' && (
+          <div className="w-full max-w-5xl bg-[#111111] text-white p-10 md:p-20">
             <div className="flex gap-2 mb-20">
               {[1, 2, 3].map((s) => (
                 <div key={s} className={`h-2 flex-1 ${step >= s ? 'bg-[#0066FF]' : 'bg-[#333]'}`} />
               ))}
             </div>
 
-            {/* Step 1 */}
             {step === 1 && (
               <div className="animate-in fade-in duration-500">
                 <h3 className="text-3xl md:text-5xl font-black tracking-[-0.05em] mb-16">Q1. 매장의 현재 상태는 어떠합니까?</h3>
@@ -125,7 +163,6 @@ export default function Home() {
               </div>
             )}
 
-            {/* Step 2 */}
             {step === 2 && (
               <div className="animate-in fade-in duration-500">
                 <h3 className="text-3xl md:text-5xl font-black tracking-[-0.05em] mb-16">Q2. 가장 도입하고 싶은 기능은 무엇입니까?</h3>
@@ -152,7 +189,6 @@ export default function Home() {
               </div>
             )}
 
-            {/* Step 3 */}
             {step === 3 && (
               <div className="text-center animate-in fade-in duration-500 py-10">
                 <div className="text-7xl font-black text-[#0066FF] mb-12">✓</div>
@@ -167,76 +203,52 @@ export default function Home() {
               </div>
             )}
           </div>
-        </div>
-      </section>
+        )}
 
-      {/* Process */}
-      <section className="px-6 py-32 md:py-48 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-5xl md:text-7xl font-black tracking-[-0.05em] mb-32">
-            단순하고 명확한 절차.
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-24">
-            {PROCESS.map((p, idx) => (
-              <div key={idx} className="flex gap-8 items-start">
-                <div className="text-7xl md:text-8xl font-black text-[#E5E5E5] tracking-tighter leading-none mt-[-8px]">{p.step}</div>
-                <div>
-                  <h3 className="text-3xl md:text-4xl font-black tracking-[-0.05em] mb-6 text-[#111111]">{p.title}</h3>
-                  <p className="text-xl text-gray-500 font-semibold leading-relaxed">{p.desc}</p>
+        {activeTab === 'process' && (
+          <div className="w-full max-w-6xl">
+            <h2 className="text-5xl md:text-7xl font-black tracking-[-0.05em] mb-24 text-center">
+              단순하고 명확한 절차.
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-16">
+              {PROCESS.map((p, idx) => (
+                <div key={idx} className="flex gap-8 items-start p-8 bg-gray-50">
+                  <div className="text-6xl font-black text-[#0066FF] tracking-tighter leading-none mt-[-4px]">{p.step}</div>
+                  <div>
+                    <h3 className="text-3xl font-black tracking-[-0.05em] mb-4 text-[#111111]">{p.title}</h3>
+                    <p className="text-xl text-gray-500 font-semibold leading-relaxed">{p.desc}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        )}
 
-      {/* FAQ */}
-      <section className="px-6 py-32 md:py-48 bg-[#F9F9F9]">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-5xl md:text-7xl font-black tracking-[-0.05em] mb-24">
-            자주 묻는 질문.
-          </h2>
-          <div className="border-t-2 border-[#111111]">
-            {FAQS.map((faq, idx) => (
-              <details key={idx} className="group py-10 border-b border-gray-300 cursor-pointer [&_summary::-webkit-details-marker]:hidden">
-                <summary className="flex justify-between items-center text-3xl md:text-4xl font-black tracking-[-0.05em] outline-none">
-                  {faq.q}
-                  <span className="text-5xl font-light text-gray-400 group-open:rotate-45 transition-transform">+</span>
-                </summary>
-                <div className="mt-8 text-2xl text-gray-600 font-semibold leading-relaxed">
-                  {faq.a}
-                </div>
-              </details>
-            ))}
+        {activeTab === 'faq' && (
+          <div className="w-full max-w-4xl">
+            <h2 className="text-5xl md:text-7xl font-black tracking-[-0.05em] mb-20 text-center">
+              자주 묻는 질문.
+            </h2>
+            <div className="border-t-2 border-[#111111]">
+              {FAQS.map((faq, idx) => (
+                <details key={idx} className="group py-10 border-b border-gray-200 cursor-pointer [&_summary::-webkit-details-marker]:hidden">
+                  <summary className="flex justify-between items-center text-2xl md:text-3xl font-black tracking-[-0.05em] outline-none">
+                    {faq.q}
+                    <span className="text-4xl font-light text-[#0066FF] group-open:rotate-45 transition-transform">+</span>
+                  </summary>
+                  <div className="mt-6 text-xl text-gray-500 font-semibold leading-relaxed">
+                    {faq.a}
+                  </div>
+                </details>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        )}
+      </main>
 
-      {/* Footer */}
-      <footer className="px-6 py-32 bg-white pb-48">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-16">
-          <div>
-            <h3 className="text-5xl font-black tracking-tighter mb-6 text-[#111111]">OKPOS</h3>
-            <p className="text-2xl text-gray-500 font-bold tracking-tight">상담 및 도입 문의: <strong className="text-[#111111]">1588-0000</strong></p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-8 sm:gap-12 text-xl font-bold text-gray-400">
-            <a href={LINKS.mall} target="_blank" rel="noreferrer" className="hover:text-[#111111] transition-colors">공식몰</a>
-            <a href={LINKS.store} target="_blank" rel="noreferrer" className="hover:text-[#111111] transition-colors">스마트스토어</a>
-            <a href={LINKS.insta} className="hover:text-[#111111] transition-colors">인스타그램</a>
-            <a href={LINKS.youtube} className="hover:text-[#111111] transition-colors">유튜브</a>
-            <a href={LINKS.blog} className="hover:text-[#111111] transition-colors">블로그</a>
-          </div>
-        </div>
-      </footer>
-
-      {/* Sticky Bottom CTA */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 md:p-6 bg-white/90 backdrop-blur-lg border-t border-gray-200 z-50">
-        <div className="max-w-md mx-auto">
-          <button className="w-full bg-[#0066FF] hover:bg-blue-700 transition-colors text-white py-5 md:py-6 font-black text-2xl tracking-[-0.05em] flex items-center justify-center gap-4 shadow-2xl">
-            <span className="w-3 h-3 rounded-full bg-white animate-pulse"></span>
-            상담원 연결 대기중
-          </button>
-        </div>
+      {/* Footer / Sticky CTA replacement */}
+      <div className="mt-auto border-t border-gray-100 bg-[#F9F9F9] p-6 text-center">
+         <p className="text-xl text-gray-400 font-bold tracking-tight">상담 및 도입 문의 <strong className="text-[#111111] text-2xl ml-2">1588-0000</strong></p>
       </div>
 
     </div>
