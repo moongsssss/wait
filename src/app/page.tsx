@@ -2,280 +2,243 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown } from 'lucide-react';
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { Home, Info, HelpCircle, Link2, ChevronRight, X } from 'lucide-react';
 
-function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
-
-// Data
+// --- Data ---
 const INDUSTRIES = [
-  { id: 'restaurant', name: '음식점' },
-  { id: 'cafe', name: '카페/베이커리' },
-  { id: 'retail', name: '도소매' },
-  { id: 'service', name: '서비스업' },
+  { 
+    id: 'restaurant', 
+    name: '음식점', 
+    setup: '포스 + 주방프린터 + 테이블오더', 
+    desc: '주문 누락을 원천 차단하고 주방과 홀의 소통을 극대화하는 가장 완벽한 식당 구성입니다.' 
+  },
+  { 
+    id: 'cafe', 
+    name: '카페 / 베이커리', 
+    setup: '포스 + 진동벨 + 키오스크', 
+    desc: '회전율이 생명인 카페 환경에 맞춰, 주문 대기열을 줄이고 초고속 결제를 지원하는 구성입니다.' 
+  },
+  { 
+    id: 'retail', 
+    name: '도소매 / 유통', 
+    setup: '포스 + 바코드 스캐너', 
+    desc: '방대한 상품의 실시간 재고 관리와 빠르고 정확한 바코드 결제 처리에 최적화되었습니다.' 
+  },
+  { 
+    id: 'service', 
+    name: '서비스 / 뷰티', 
+    setup: '포스 + 고객용 모니터', 
+    desc: '고객과 함께 예약 내역을 확인하고, 포인트 적립 현황을 직관적으로 보여주는 신뢰형 구성입니다.' 
+  },
 ];
 
 const PROCESS = [
-  { step: '01', title: '문의 접수', desc: '현재 대기 중인 상태에서 기초 환경을 파악합니다.' },
-  { step: '02', title: '환경 확인', desc: '제공해주신 정보를 바탕으로 매장에 필요한 구성을 점검합니다.' },
-  { step: '03', title: '맞춤 제안', desc: '전문 상담원이 매장에 최적화된 기기와 솔루션을 제안합니다.' },
-  { step: '04', title: '설치 및 교육', desc: '전문 기사가 방문하여 신속한 설치와 사용법 교육을 진행합니다.' },
+  { step: '01', title: '상담 연결', desc: '현재 대기 중이며, 곧 전문 상담원과 연결됩니다.' },
+  { step: '02', title: '환경 분석', desc: '매장 평수와 업종에 맞춘 최적의 구성을 확인합니다.' },
+  { step: '03', title: '맞춤 견적', desc: '필요한 기기만 선별하여 투명한 견적을 안내합니다.' },
+  { step: '04', title: '방문 설치', desc: '전국 직영망을 통해 전문 기사가 방문하여 세팅합니다.' },
 ];
 
 const FAQS = [
-  { q: "가입비나 설치비가 별도로 발생하나요?", a: "기본적인 설치비는 지원되며, 특수한 설치 환경의 경우 사전 고지 후 진행됩니다." },
-  { q: "기존에 쓰던 포스기나 장비와 호환이 되나요?", a: "대부분의 표준 규격 장비와 호환이 가능하나, 정확한 확인을 위해 상담 시 보유하신 기기 모델을 알려주시면 상세히 안내해 드립니다." },
-  { q: "사용 중 문제가 생기면 AS는 어떻게 되나요?", a: "전국 직영 인프라망을 통해 빠른 현장 출동이 가능하며, 24시간 원격 지원을 통해 즉각적인 문제 해결을 도와드립니다." },
+  { q: "가입비나 설치비가 발생하나요?", a: "기본 설치비는 전액 지원됩니다. 단, 배선 공사 등 특수 환경의 경우 사전 고지 후 진행됩니다." },
+  { q: "기존에 쓰던 장비와 호환 되나요?", a: "대부분의 표준 규격 장비는 호환 가능합니다. 상담 시 사용 중인 기기 모델을 알려주시면 정확합니다." },
+  { q: "사용 중 고장 나면 어떻게 하나요?", a: "365일 24시간 원격 지원 센터를 운영하며, 필요 시 전국 직영 AS팀이 즉각 현장으로 출동합니다." },
 ];
 
 const LINKS = [
-  { label: '공식몰', url: 'https://www.okposmall.co.kr/' },
+  { label: '공식몰 (장비 둘러보기)', url: 'https://www.okposmall.co.kr/' },
   { label: '스마트스토어', url: 'https://smartstore.naver.com/tpay' },
   { label: '인스타그램', url: 'https://www.instagram.com/okpos_official/' },
-  { label: '유튜브', url: 'https://www.youtube.com/@OKPOS_official' },
-  { label: '블로그', url: 'https://blog.naver.com/okpos_official' },
+  { label: '유튜브 채널', url: 'https://www.youtube.com/@OKPOS_official' },
 ];
 
-// Animation Variants
-const slideVariants = {
-  enter: { y: 20, opacity: 0 },
-  center: { y: 0, opacity: 1 },
-  exit: { y: -20, opacity: 0 },
+const TABS = [
+  { id: 'home', icon: Home, label: '추천구성' },
+  { id: 'process', icon: Info, label: '도입절차' },
+  { id: 'faq', icon: HelpCircle, label: 'FAQ' },
+  { id: 'links', icon: Link2, label: '공식채널' },
+];
+
+// --- Animation ---
+const fadeVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+  exit: { opacity: 0, y: -10, transition: { duration: 0.2 } }
 };
 
-export default function Home() {
-  const [step, setStep] = useState(0); // 0: Hero, 1: Industry, 2: Q1, 3: Q2, 4: Complete
-  const [answers, setAnswers] = useState({
-    industry: '',
-    status: '',
-    feature: '',
-  });
-
-  const handleNext = (key: string, value: string) => {
-    setAnswers(prev => ({ ...prev, [key]: value }));
-    setStep(prev => prev + 1);
-  };
+export default function HomeApp() {
+  const [activeTab, setActiveTab] = useState('home');
+  const [selectedIndustry, setSelectedIndustry] = useState<typeof INDUSTRIES[0] | null>(null);
 
   return (
-    <div className="min-h-screen bg-white text-[#111111] font-sans selection:bg-[#0066FF] selection:text-white">
+    <div className="h-[100dvh] w-full bg-[#FFFFFF] text-[#111111] font-sans overflow-hidden flex flex-col selection:bg-[#0066FF] selection:text-white">
       
-      {/* Top Status Bar */}
-      <div className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-gray-100 flex justify-center py-4">
-        <div className="flex items-center gap-3 px-5 py-2.5 rounded-full bg-gray-50 border border-gray-200">
-          <span className="relative flex h-3 w-3">
+      {/* Top Status Bar (Fixed) */}
+      <header className="flex-shrink-0 pt-12 pb-6 px-6 flex flex-col items-center border-b border-gray-100 bg-white z-20">
+        <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-[#F5F5F7] mb-6">
+          <span className="relative flex h-2.5 w-2.5">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#0066FF] opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-[#0066FF]"></span>
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#0066FF]"></span>
           </span>
           <span className="text-sm font-bold tracking-tight text-[#0066FF]">
-            1688-4345 상담 연결 대기 중입니다
+            1688-4345 상담 연결 대기 중
           </span>
         </div>
-      </div>
+        <h1 className="text-3xl font-black tracking-[-0.05em] text-center leading-tight">
+          매장에 맞는 솔루션을<br />먼저 확인해보세요.
+        </h1>
+      </header>
 
-      {/* Main Interactive Viewport */}
-      <section className="relative w-full max-w-2xl mx-auto px-6 py-12 min-h-[60vh] flex flex-col justify-center">
+      {/* Main Content Area (Scrollable internally if needed, but mostly fits) */}
+      <main className="flex-1 relative overflow-y-auto bg-white pb-24 hide-scrollbar">
         <AnimatePresence mode="wait">
-          {step === 0 && (
-            <motion.div
-              key="step0"
-              variants={slideVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.3 }}
-              className="flex flex-col items-start w-full"
-            >
-              <h1 className="text-5xl sm:text-6xl font-black tracking-[-0.05em] leading-[1.1] mb-6">
-                매장에 맞는<br />
-                POS 구성을<br />
-                먼저 확인해보세요
-              </h1>
-              <p className="text-xl sm:text-2xl text-gray-500 font-semibold tracking-tight mb-12 leading-snug">
-                상담 전 필요한 기능을 선택해 두시면<br />
-                더 빠르게 안내해 드립니다.
-              </p>
-              <button
-                onClick={() => setStep(1)}
-                className="w-full py-6 bg-[#0066FF] text-white text-2xl font-black rounded-2xl active:scale-[0.98] transition-transform flex items-center justify-center gap-2"
-              >
-                내 매장 맞춤 구성 찾기
-              </button>
-            </motion.div>
-          )}
-
-          {step === 1 && (
-            <motion.div
-              key="step1"
-              variants={slideVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.3 }}
-              className="w-full"
-            >
-              <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-10">어떤 매장을 운영하시나요?</h2>
-              <div className="grid grid-cols-2 gap-4">
-                {INDUSTRIES.map((ind) => (
-                  <button
-                    key={ind.id}
-                    onClick={() => handleNext('industry', ind.name)}
-                    className="aspect-square bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-3xl flex flex-col items-center justify-center p-6 active:scale-95 transition-all text-center"
-                  >
-                    <span className="text-2xl sm:text-3xl font-black tracking-[-0.05em] text-[#111111]">{ind.name}</span>
-                  </button>
-                ))}
-              </div>
-            </motion.div>
-          )}
-
-          {step === 2 && (
-            <motion.div
-              key="step2"
-              variants={slideVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.3 }}
-              className="w-full"
-            >
-              <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-10 leading-[1.15]">매장 운영 상태를<br/>알려주세요</h2>
-              <div className="flex flex-col gap-4">
-                {['신규 오픈 준비 중', '기존 매장 기기 교체'].map((status) => (
-                  <button
-                    key={status}
-                    onClick={() => handleNext('status', status)}
-                    className="w-full py-8 px-6 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-3xl text-2xl sm:text-3xl font-black tracking-[-0.05em] text-left active:scale-[0.98] transition-all"
-                  >
-                    {status}
-                  </button>
-                ))}
-              </div>
-            </motion.div>
-          )}
-
-          {step === 3 && (
-            <motion.div
-              key="step3"
-              variants={slideVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.3 }}
-              className="w-full"
-            >
-              <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-10 leading-[1.15]">어떤 솔루션 연동이<br/>필요하신가요?</h2>
-              <div className="flex flex-col gap-4">
-                {['POS만 필요합니다', '키오스크도 필요합니다', '배달 및 주방 연동이 필요합니다'].map((feature) => (
-                  <button
-                    key={feature}
-                    onClick={() => handleNext('feature', feature)}
-                    className="w-full py-8 px-6 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-3xl text-2xl sm:text-3xl font-black tracking-[-0.05em] text-left active:scale-[0.98] transition-all"
-                  >
-                    {feature}
-                  </button>
-                ))}
-              </div>
-            </motion.div>
-          )}
-
-          {step === 4 && (
-            <motion.div
-              key="step4"
-              variants={slideVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.3 }}
-              className="flex flex-col items-center justify-center w-full py-12 text-center"
-            >
-              <div className="w-24 h-24 bg-blue-50 text-[#0066FF] rounded-full flex items-center justify-center mb-8">
-                <svg className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-6">확인이 완료되었습니다.</h2>
-              <p className="text-xl sm:text-2xl text-gray-500 font-semibold tracking-tight">
-                전문 상담원이 맞춤 제안을<br />준비하고 있습니다.
-              </p>
-              <button
-                onClick={() => setStep(0)}
-                className="mt-12 text-lg font-bold text-gray-400 hover:text-[#111111] transition-colors"
-              >
-                다시 선택하기
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </section>
-
-      {/* Process & FAQ Section */}
-      <section className="bg-[#F9F9F9] py-24 sm:py-32 px-6 border-t border-gray-100">
-        <div className="max-w-3xl mx-auto space-y-32">
           
-          {/* Process */}
-          <div>
-            <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-16">진행 절차</h2>
-            <div className="space-y-12">
-              {PROCESS.map((p) => (
-                <div key={p.step} className="relative pl-8 sm:pl-12">
-                  <div className="absolute left-0 top-[-20px] text-7xl sm:text-8xl font-black text-gray-200/50 tracking-tighter select-none">
-                    {p.step}
-                  </div>
-                  <div className="relative z-10 pt-4">
-                    <h3 className="text-2xl sm:text-3xl font-black tracking-[-0.05em] mb-3">{p.title}</h3>
-                    <p className="text-lg sm:text-xl text-gray-600 font-semibold leading-relaxed">{p.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          {/* TAB 1: 추천 구성 (Home) */}
+          {activeTab === 'home' && (
+             <motion.div key="home" variants={fadeVariants} initial="hidden" animate="visible" exit="exit" className="p-6 h-full flex flex-col">
+               {!selectedIndustry ? (
+                 <>
+                   <h2 className="text-xl font-bold tracking-[-0.05em] text-gray-400 mb-6">
+                     어떤 매장을 운영하시나요?
+                   </h2>
+                   <div className="flex flex-col gap-3">
+                     {INDUSTRIES.map((ind) => (
+                       <button
+                         key={ind.id}
+                         onClick={() => setSelectedIndustry(ind)}
+                         className="flex items-center justify-between w-full p-6 bg-[#F9F9F9] hover:bg-gray-100 active:scale-[0.98] transition-all rounded-3xl text-left border border-transparent hover:border-gray-200"
+                       >
+                         <span className="text-2xl font-black tracking-[-0.05em] text-[#111111]">{ind.name}</span>
+                         <ChevronRight className="text-gray-400" />
+                       </button>
+                     ))}
+                   </div>
+                 </>
+               ) : (
+                 <div className="flex flex-col h-full animate-in fade-in zoom-in-95 duration-300">
+                   <button 
+                     onClick={() => setSelectedIndustry(null)}
+                     className="self-end p-2 bg-gray-100 rounded-full mb-4 active:scale-90 transition-transform"
+                   >
+                     <X className="w-6 h-6 text-gray-600" />
+                   </button>
+                   <div className="flex-1 flex flex-col justify-center text-center px-4">
+                     <span className="text-[#0066FF] font-black tracking-tighter text-xl mb-4">{selectedIndustry.name} 추천 구성</span>
+                     <h3 className="text-4xl font-black tracking-[-0.05em] mb-8 leading-tight break-keep">
+                       {selectedIndustry.setup}
+                     </h3>
+                     <p className="text-lg text-gray-500 font-semibold leading-relaxed break-keep">
+                       {selectedIndustry.desc}
+                     </p>
+                     <div className="mt-12 p-6 bg-[#F9F9F9] rounded-3xl border border-gray-100">
+                       <p className="text-sm font-bold text-gray-400">
+                         상담원 연결 시 위 구성을 말씀해주시면<br/>더욱 빠른 안내가 가능합니다.
+                       </p>
+                     </div>
+                   </div>
+                 </div>
+               )}
+             </motion.div>
+          )}
 
-          {/* FAQ */}
-          <div>
-            <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-12">자주 묻는 질문</h2>
-            <div className="border-t-2 border-[#111111]">
-              {FAQS.map((faq, idx) => (
-                <details key={idx} className="group py-8 border-b border-gray-200 cursor-pointer [&_summary::-webkit-details-marker]:hidden">
-                  <summary className="flex justify-between items-center outline-none">
-                    <span className="text-xl sm:text-2xl font-black tracking-[-0.05em] pr-4">{faq.q}</span>
-                    <ChevronDown className="w-8 h-8 text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0" strokeWidth={2.5} />
-                  </summary>
-                  <div className="mt-6 text-lg sm:text-xl text-gray-500 font-semibold leading-relaxed pr-8">
-                    {faq.a}
+          {/* TAB 2: 도입 절차 (Process) */}
+          {activeTab === 'process' && (
+            <motion.div key="process" variants={fadeVariants} initial="hidden" animate="visible" exit="exit" className="p-6">
+              <h2 className="text-xl font-bold tracking-[-0.05em] text-gray-400 mb-8">
+                단순하고 명확한 절차
+              </h2>
+              <div className="space-y-10">
+                {PROCESS.map((p) => (
+                  <div key={p.step} className="flex gap-6 items-start">
+                    <div className="text-4xl font-black text-gray-200 tracking-tighter leading-none mt-1">
+                      {p.step}
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-black tracking-[-0.05em] mb-2 text-[#111111]">{p.title}</h3>
+                      <p className="text-gray-500 font-semibold leading-snug">{p.desc}</p>
+                    </div>
                   </div>
-                </details>
-              ))}
-            </div>
-          </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
 
-        </div>
-      </section>
+          {/* TAB 3: FAQ */}
+          {activeTab === 'faq' && (
+            <motion.div key="faq" variants={fadeVariants} initial="hidden" animate="visible" exit="exit" className="p-6">
+              <h2 className="text-xl font-bold tracking-[-0.05em] text-gray-400 mb-6">
+                자주 묻는 질문
+              </h2>
+              <div className="border-t-2 border-[#111111]">
+                {FAQS.map((faq, idx) => (
+                  <details key={idx} className="group py-6 border-b border-gray-100 cursor-pointer [&_summary::-webkit-details-marker]:hidden">
+                    <summary className="flex justify-between items-center outline-none">
+                      <span className="text-lg font-black tracking-[-0.05em] pr-4 leading-tight">{faq.q}</span>
+                      <ChevronRight className="w-6 h-6 text-gray-300 group-open:rotate-90 transition-transform flex-shrink-0" />
+                    </summary>
+                    <div className="mt-4 text-base text-gray-500 font-semibold leading-relaxed">
+                      {faq.a}
+                    </div>
+                  </details>
+                ))}
+              </div>
+            </motion.div>
+          )}
 
-      {/* Global Footer & Official Links */}
-      <footer className="bg-[#111111] text-white py-20 px-6">
-        <div className="max-w-3xl mx-auto flex flex-col">
-          <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-12">오케이포스 공식 채널</h2>
-          <div className="flex flex-col gap-2 mb-20">
-            {LINKS.map((link) => (
-              <a 
-                key={link.label} 
-                href={link.url} 
-                target="_blank" 
-                rel="noreferrer"
-                className="py-6 border-b border-gray-800 text-2xl sm:text-3xl font-black tracking-[-0.05em] hover:text-[#0066FF] hover:pl-4 transition-all"
-              >
-                {link.label}
-              </a>
-            ))}
-          </div>
-          <div className="text-gray-500 font-bold tracking-tight">
-            © OKPOS. All rights reserved.
-          </div>
-        </div>
-      </footer>
+          {/* TAB 4: 공식 채널 (Links) */}
+          {activeTab === 'links' && (
+            <motion.div key="links" variants={fadeVariants} initial="hidden" animate="visible" exit="exit" className="p-6 h-full flex flex-col">
+              <h2 className="text-xl font-bold tracking-[-0.05em] text-gray-400 mb-6">
+                오케이포스 공식 채널
+              </h2>
+              <div className="flex flex-col gap-3">
+                {LINKS.map((link) => (
+                  <a 
+                    key={link.label} 
+                    href={link.url} 
+                    target="_blank" 
+                    rel="noreferrer"
+                    className="flex items-center justify-between w-full p-6 bg-[#111111] active:bg-[#333333] transition-colors rounded-3xl"
+                  >
+                    <span className="text-xl font-black tracking-[-0.05em] text-white">{link.label}</span>
+                    <Link2 className="text-gray-400 w-5 h-5" />
+                  </a>
+                ))}
+              </div>
+              <div className="mt-auto pt-10 text-center text-xs font-bold text-gray-300">
+                © OKPOS. All rights reserved.
+              </div>
+            </motion.div>
+          )}
+          
+        </AnimatePresence>
+      </main>
+
+      {/* Bottom Navigation Tab Bar (Fixed) */}
+      <nav className="flex-shrink-0 h-[88px] bg-white border-t border-gray-100 flex justify-around items-center px-2 pb-safe">
+        {TABS.map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => {
+                setActiveTab(tab.id);
+                setSelectedIndustry(null); // 탭 이동시 선택 초기화
+              }}
+              className="flex flex-col items-center justify-center w-full h-full gap-1.5 active:scale-95 transition-transform"
+            >
+              <Icon 
+                className={`w-6 h-6 transition-colors ${isActive ? 'text-[#111111]' : 'text-gray-300'}`} 
+                strokeWidth={isActive ? 2.5 : 2}
+              />
+              <span className={`text-[11px] font-bold tracking-tight transition-colors ${isActive ? 'text-[#111111]' : 'text-gray-400'}`}>
+                {tab.label}
+              </span>
+            </button>
+          );
+        })}
+      </nav>
 
     </div>
   );
