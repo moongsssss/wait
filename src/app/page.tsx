@@ -1,165 +1,209 @@
-import React from 'react';
+"use client";
+
+import React, { useState } from 'react';
+
+// Data
+const INDUSTRIES = [
+  { id: 'restaurant', name: '음식점', desc: '테이블오더와 주방의 완벽한 동기화.' },
+  { id: 'cafe', name: '카페', desc: '초당 결제 처리량의 극대화와 진동벨 연동.' },
+  { id: 'retail', name: '유통', desc: '방대한 재고 데이터의 실시간 추적.' },
+  { id: 'service', name: '서비스', desc: '고객 예약과 포인트 제도의 유기적 결합.' },
+];
+
+const PROCESS = [
+  { step: '01', title: '상담 접수', desc: '현재 대기 상태에서 시스템이 사전 정보를 수집합니다.' },
+  { step: '02', title: '환경 분석', desc: '수집된 정보를 바탕으로 매장 환경을 진단합니다.' },
+  { step: '03', title: '솔루션 제안', desc: '최적화된 포스 및 키오스크 구성을 제안받습니다.' },
+  { step: '04', title: '구축 및 교육', desc: '전문 엔지니어가 방문하여 설치와 교육을 진행합니다.' },
+];
+
+const FAQS = [
+  { q: "가입비나 설치비가 별도로 청구됩니까?", a: "기본 설치비는 무상으로 제공되며, 특수 환경의 경우 사전 고지 후 진행됩니다." },
+  { q: "기존에 사용하던 장비와 호환이 가능합니까?", a: "대부분의 범용 규격 장비와 호환이 가능합니다. 상세 모델은 상담 시 확인 바랍니다." },
+  { q: "사후 관리 정책은 어떻게 됩니까?", a: "전국 직영 인프라를 통해 신속한 현장 대응 및 24시간 원격 지원을 제공합니다." },
+  { q: "약정 기간 내 해지 시 위약금이 발생합니까?", a: "약정 조건에 따라 위약금이 발생할 수 있으며, 계약 시 투명하게 고지합니다." }
+];
+
+const LINKS = {
+  mall: "https://www.okposmall.co.kr/",
+  store: "https://smartstore.naver.com/tpay",
+  insta: "#",
+  youtube: "#",
+  blog: "#"
+};
 
 export default function Home() {
+  const [step, setStep] = useState(1);
+  const [checklist, setChecklist] = useState({ type: '', features: [] as string[] });
+
+  const handleTypeSelect = (type: string) => {
+    setChecklist({ ...checklist, type });
+    setStep(2);
+  };
+
+  const toggleFeature = (feature: string) => {
+    const features = checklist.features.includes(feature)
+      ? checklist.features.filter(f => f !== feature)
+      : [...checklist.features, feature];
+    setChecklist({ ...checklist, features });
+  };
+
   return (
-    <main className="bg-white text-[#1d1d1f] font-sans antialiased overflow-hidden selection:bg-[#007AFF] selection:text-white">
+    <div className="min-h-screen bg-[#FFFFFF] text-[#111111] font-sans antialiased pb-24 selection:bg-[#0066FF] selection:text-white">
       
-      {/* 1. Hero Section */}
-      <section className="relative flex flex-col items-center justify-center min-h-screen px-6 text-center pt-20 pb-32">
-        <div className="max-w-5xl mx-auto space-y-8 animate-fade-in-up">
-          <h2 className="text-[#007AFF] font-bold tracking-widest uppercase text-sm md:text-base mb-6">
-            OKPOS Consulting
+      {/* Navbar */}
+      <nav className="flex items-center justify-between px-6 py-8 border-b border-gray-100">
+        <div className="font-black text-3xl tracking-tighter">OKPOS</div>
+        <div className="hidden md:flex gap-8 text-sm font-bold text-gray-400">
+          <a href={LINKS.mall} target="_blank" rel="noreferrer" className="hover:text-[#111111] transition-colors">공식몰</a>
+          <a href={LINKS.store} target="_blank" rel="noreferrer" className="hover:text-[#111111] transition-colors">스마트스토어</a>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="px-6 py-32 md:py-48 flex flex-col items-center justify-center text-center">
+        <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full border border-gray-200 bg-gray-50 text-sm font-bold text-[#0066FF] mb-12">
+          <span className="w-2.5 h-2.5 rounded-full bg-[#0066FF] animate-pulse"></span>
+          상담 대기 중
+        </div>
+        <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-[-0.05em] leading-[1.05] text-[#111111] mb-10 break-keep">
+          매장에 맞는 구성을<br />먼저 확인해보세요.
+        </h1>
+        <p className="text-2xl md:text-3xl text-gray-400 font-semibold tracking-tight max-w-3xl leading-snug">
+          상담 전 핵심 정보를 입력하시면,<br className="hidden md:block"/>
+          이탈 없이 빠르고 정확한 안내가 가능합니다.
+        </p>
+      </section>
+
+      {/* Industry Selector */}
+      <section className="px-6 py-32 md:py-48 bg-[#F9F9F9]">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-5xl md:text-7xl font-black tracking-[-0.05em] mb-24 text-center">
+            어떤 업종을 준비하십니까.
           </h2>
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter leading-[1.1] text-black">
-            매장에 맞는 구성을<br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-600 to-gray-900">먼저 확인하세요.</span>
-          </h1>
-          <p className="text-xl md:text-2xl text-[#86868b] font-medium max-w-2xl mx-auto leading-relaxed mt-8">
-            상담 전 핵심 내용을 미리 파악하시면,<br className="hidden md:block"/>
-            매장 환경에 최적화된 안내를 더 빠르게 받으실 수 있습니다.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-16">
-            <a href="#industries" className="w-full sm:w-auto px-10 py-5 bg-black text-white text-lg font-semibold rounded-full hover:scale-105 transition-transform duration-300 shadow-xl shadow-black/10">
-              내 매장 구성 찾기
-            </a>
-            <a href="#checklist" className="w-full sm:w-auto px-10 py-5 bg-[#f5f5f7] text-[#1d1d1f] text-lg font-semibold rounded-full hover:bg-[#e8e8ed] transition-colors duration-300">
-              도입 전 체크리스트
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* 2. Industry Selector */}
-      <section id="industries" className="py-32 md:py-48 px-6 bg-[#f5f5f7]">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-24">
-            <h2 className="text-4xl md:text-6xl font-bold tracking-tighter mb-6">어떤 업종을 준비하시나요?</h2>
-            <p className="text-xl md:text-2xl text-[#86868b] font-medium">업종별 최적의 솔루션을 제안합니다.</p>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-            {[
-              { id: 'restaurant', name: '음식점', desc: '테이블오더와 포스 연동', icon: '🍽️' },
-              { id: 'cafe', name: '카페', desc: '빠른 결제와 진동벨 연동', icon: '☕' },
-              { id: 'retail', name: '도소매', desc: '바코드 스캐너와 재고관리', icon: '🛍️' },
-              { id: 'service', name: '서비스', desc: '예약 관리와 고객 포인트', icon: '💇' },
-            ].map((item) => (
-              <div key={item.id} className="group bg-white rounded-[32px] p-10 hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)] transition-all duration-500 cursor-pointer border border-transparent hover:border-gray-200">
-                <div className="text-6xl mb-8 transform group-hover:-translate-y-3 transition-transform duration-500">{item.icon}</div>
-                <h3 className="text-3xl font-bold mb-4 tracking-tight">{item.name}</h3>
-                <p className="text-[#86868b] text-lg font-medium leading-relaxed">{item.desc}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-0 border border-gray-200 bg-white">
+            {INDUSTRIES.map((item, idx) => (
+              <div key={item.id} className={`p-12 md:p-16 hover:bg-[#111111] hover:text-white transition-colors duration-300 group cursor-pointer ${idx !== 0 ? 'border-t md:border-t-0 md:border-l border-gray-200' : ''}`}>
+                <h3 className="text-4xl font-black tracking-[-0.05em] mb-6">{item.name}</h3>
+                <p className="text-gray-500 group-hover:text-gray-300 font-semibold text-xl leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* 3. Solution Grid */}
-      <section className="py-32 md:py-48 px-6 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-24">
-            <h2 className="text-4xl md:text-6xl font-bold tracking-tighter mb-6">핵심 솔루션.</h2>
-            <p className="text-xl md:text-2xl text-[#86868b] font-medium">매장 운영을 더 쉽고, 더 완벽하게.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-[#f5f5f7] rounded-[48px] p-12 md:p-16 flex flex-col justify-between overflow-hidden relative group h-[500px] md:h-[600px]">
-              <div className="relative z-10">
-                <h3 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">OKPOS</h3>
-                <p className="text-xl md:text-2xl text-[#86868b] font-medium mb-8 leading-tight">안정적인 결제와<br />직관적인 매장 관리.</p>
-                <span className="text-[#007AFF] font-semibold text-xl hover:underline cursor-pointer">자세히 알아보기 &gt;</span>
-              </div>
-              <div className="absolute -bottom-10 -right-10 w-[80%] h-[60%] bg-white/60 rounded-tl-3xl border-t border-l border-white shadow-2xl backdrop-blur-md group-hover:scale-105 transition-transform duration-700 flex items-center justify-center text-gray-300 font-bold text-2xl">
-                POS UI Placeholder
-              </div>
-            </div>
-
-            <div className="bg-[#f5f5f7] rounded-[48px] p-12 md:p-16 flex flex-col justify-between overflow-hidden relative group h-[500px] md:h-[600px]">
-              <div className="relative z-10">
-                <h3 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">OK Kiosk</h3>
-                <p className="text-xl md:text-2xl text-[#86868b] font-medium mb-8 leading-tight">인건비 절감의 핵심.<br />빠르고 정확한 무인 주문.</p>
-                <span className="text-[#007AFF] font-semibold text-xl hover:underline cursor-pointer">자세히 알아보기 &gt;</span>
-              </div>
-              <div className="absolute -bottom-10 right-10 w-[50%] h-[70%] bg-white/60 rounded-t-3xl border-t border-l border-r border-white shadow-2xl backdrop-blur-md group-hover:scale-105 transition-transform duration-700 flex items-center justify-center text-gray-300 font-bold text-xl text-center px-4">
-                Kiosk UI<br/>Placeholder
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 4. Checklist */}
-      <section id="checklist" className="py-32 md:py-48 px-6 bg-[#111111] text-white">
+      {/* Interactive Checklist */}
+      <section className="px-6 py-32 md:py-48 bg-[#111111] text-white">
         <div className="max-w-5xl mx-auto">
-          <div className="mb-24 text-center md:text-left">
-            <h2 className="text-4xl md:text-6xl font-bold tracking-tighter mb-6">상담 전 체크리스트.</h2>
-            <p className="text-xl md:text-2xl text-gray-400 font-medium">아래 항목을 미리 확인하시면 상담이 훨씬 수월해집니다.</p>
+          <div className="text-center mb-24">
+            <h2 className="text-5xl md:text-7xl font-black tracking-[-0.05em] mb-8">
+              도입 환경 분석.
+            </h2>
+            <p className="text-2xl text-gray-400 font-bold tracking-tight">단 3단계로 매장의 요구사항을 파악합니다.</p>
           </div>
 
-          <div className="space-y-6">
-            {[
-              "매장의 평수와 층수는 어떻게 되나요?",
-              "주로 결제가 일어나는 곳(카운터)의 위치가 정해졌나요?",
-              "테이블오더나 진동벨 등 추가 연동 기기가 필요한가요?",
-              "인터넷 랜선과 콘센트 설치가 완료되었나요?",
-              "사업자 등록증이 발급된 상태인가요?",
-            ].map((question, index) => (
-              <div key={index} className="flex items-start gap-8 p-10 rounded-[32px] bg-[#1d1d1f] border border-[#333336] hover:border-gray-500 transition-colors duration-300">
-                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#007AFF] flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-blue-500/30 mt-1">
-                  {index + 1}
-                </div>
-                <p className="text-2xl md:text-3xl font-medium tracking-tight text-gray-100 leading-tight">{question}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 5. Process */}
-      <section className="py-32 md:py-48 px-6 bg-white overflow-hidden">
-         <div className="max-w-6xl mx-auto text-center">
-            <h2 className="text-4xl md:text-6xl font-bold tracking-tighter mb-32">도입 프로세스.</h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-16 md:gap-8 relative">
-              <div className="hidden md:block absolute top-16 left-[12%] right-[12%] h-1 bg-gray-100 -z-10 rounded-full"></div>
-              {[
-                { step: '01', title: '상담 신청', desc: '현재 페이지에서 내용을 확인하고 대기합니다.' },
-                { step: '02', title: '맞춤 컨설팅', desc: '전문 상담원과 매장 환경에 맞는 구성을 논의합니다.' },
-                { step: '03', title: '계약 및 일정', desc: '도입 장비를 확정하고 설치 일정을 조율합니다.' },
-                { step: '04', title: '설치 및 교육', desc: '전문 기사가 방문하여 설치하고 사용법을 안내합니다.' },
-              ].map((item, index) => (
-                <div key={index} className="flex flex-col items-center group">
-                  <div className="w-32 h-32 rounded-full bg-white flex items-center justify-center text-3xl font-bold text-black mb-10 border-[6px] border-[#f5f5f7] shadow-xl group-hover:border-[#007AFF] group-hover:text-[#007AFF] transition-all duration-300">
-                    {item.step}
-                  </div>
-                  <h3 className="text-3xl font-bold mb-4 tracking-tight">{item.title}</h3>
-                  <p className="text-[#86868b] text-lg font-medium leading-relaxed max-w-[220px]">{item.desc}</p>
-                </div>
+          <div className="bg-[#181818] p-10 md:p-20 border border-[#333]">
+            {/* Progress Bar */}
+            <div className="flex gap-2 mb-20">
+              {[1, 2, 3].map((s) => (
+                <div key={s} className={`h-2 flex-1 ${step >= s ? 'bg-[#0066FF]' : 'bg-[#333]'}`} />
               ))}
             </div>
-         </div>
+
+            {/* Step 1 */}
+            {step === 1 && (
+              <div className="animate-in fade-in duration-500">
+                <h3 className="text-3xl md:text-5xl font-black tracking-[-0.05em] mb-16">Q1. 매장의 현재 상태는 어떠합니까?</h3>
+                <div className="flex flex-col sm:flex-row gap-6">
+                  <button onClick={() => handleTypeSelect('신규')} className="flex-1 py-10 px-8 bg-[#222] hover:bg-[#0066FF] transition-colors text-3xl font-black tracking-tight text-left">
+                    신규 창업입니다.
+                  </button>
+                  <button onClick={() => handleTypeSelect('교체')} className="flex-1 py-10 px-8 bg-[#222] hover:bg-[#0066FF] transition-colors text-3xl font-black tracking-tight text-left">
+                    기존 장비 교체입니다.
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Step 2 */}
+            {step === 2 && (
+              <div className="animate-in fade-in duration-500">
+                <h3 className="text-3xl md:text-5xl font-black tracking-[-0.05em] mb-16">Q2. 가장 도입하고 싶은 기능은 무엇입니까?</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-16">
+                  {['테이블오더', '키오스크', '재고관리 시스템', '고객 포인트/예약'].map((feature) => (
+                    <button 
+                      key={feature}
+                      onClick={() => toggleFeature(feature)}
+                      className={`py-8 px-8 text-2xl font-bold tracking-tight text-left border-2 ${
+                        checklist.features.includes(feature) ? 'bg-[#0066FF] border-[#0066FF]' : 'bg-[#222] border-transparent hover:border-gray-500'
+                      } transition-colors`}
+                    >
+                      {feature}
+                    </button>
+                  ))}
+                </div>
+                <button 
+                  onClick={() => setStep(3)}
+                  disabled={checklist.features.length === 0}
+                  className="w-full py-8 bg-white text-[#111111] font-black text-3xl tracking-tight disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-200 transition-colors"
+                >
+                  다음 단계로
+                </button>
+              </div>
+            )}
+
+            {/* Step 3 */}
+            {step === 3 && (
+              <div className="text-center animate-in fade-in duration-500 py-10">
+                <div className="text-7xl font-black text-[#0066FF] mb-12">✓</div>
+                <h3 className="text-5xl md:text-6xl font-black tracking-[-0.05em] mb-8">분석이 완료되었습니다.</h3>
+                <p className="text-2xl text-gray-400 font-bold tracking-tight mb-16">입력하신 정보는 상담원에게 실시간으로 공유됩니다.</p>
+                <button 
+                  onClick={() => { setStep(1); setChecklist({ type: '', features: [] }); }}
+                  className="px-12 py-5 bg-transparent border-2 border-gray-600 text-white font-bold text-xl tracking-tight hover:bg-white hover:text-[#111111] transition-colors"
+                >
+                  다시 시작하기
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       </section>
 
-      {/* 6. FAQ */}
-      <section className="py-32 md:py-48 px-6 bg-[#f5f5f7]">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl md:text-6xl font-bold tracking-tighter mb-24 text-center">자주 묻는 질문.</h2>
-          
-          <div className="space-y-4">
-            {[
-              { q: "가입비나 설치비가 별도로 있나요?", a: "기본 설치비는 무료이며, 특수 환경의 경우 사전 안내 후 진행됩니다." },
-              { q: "계약 기간은 어떻게 되나요?", a: "기본 약정 기간은 3년이며, 조건에 따라 유연하게 선택 가능합니다." },
-              { q: "기존에 쓰던 장비와 호환이 되나요?", a: "대부분의 표준 장비와 호환되나, 정확한 확인을 위해 기기 모델명을 상담원에게 알려주세요." },
-              { q: "A/S는 어떻게 진행되나요?", a: "전국 직영 A/S망을 통해 신속하게 대처하며, 원격 지원으로 즉각적인 문제 해결을 돕습니다." },
-              { q: "위약금이 발생하나요?", a: "약정 기간 내 해지 시 위약금이 발생할 수 있으며, 자세한 사항은 계약 시 상세히 안내해 드립니다." },
-            ].map((faq, index) => (
-              <details key={index} className="group bg-white rounded-3xl [&_summary::-webkit-details-marker]:hidden border border-transparent hover:border-gray-200 transition-colors shadow-sm">
-                <summary className="flex items-center justify-between p-10 text-2xl font-bold tracking-tight cursor-pointer outline-none text-gray-900">
+      {/* Process */}
+      <section className="px-6 py-32 md:py-48 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-5xl md:text-7xl font-black tracking-[-0.05em] mb-32">
+            단순하고 명확한 절차.
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-24">
+            {PROCESS.map((p, idx) => (
+              <div key={idx} className="flex gap-8 items-start">
+                <div className="text-7xl md:text-8xl font-black text-[#E5E5E5] tracking-tighter leading-none mt-[-8px]">{p.step}</div>
+                <div>
+                  <h3 className="text-3xl md:text-4xl font-black tracking-[-0.05em] mb-6 text-[#111111]">{p.title}</h3>
+                  <p className="text-xl text-gray-500 font-semibold leading-relaxed">{p.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="px-6 py-32 md:py-48 bg-[#F9F9F9]">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-5xl md:text-7xl font-black tracking-[-0.05em] mb-24">
+            자주 묻는 질문.
+          </h2>
+          <div className="border-t-2 border-[#111111]">
+            {FAQS.map((faq, idx) => (
+              <details key={idx} className="group py-10 border-b border-gray-300 cursor-pointer [&_summary::-webkit-details-marker]:hidden">
+                <summary className="flex justify-between items-center text-3xl md:text-4xl font-black tracking-[-0.05em] outline-none">
                   {faq.q}
-                  <span className="text-[#007AFF] text-4xl font-light group-open:rotate-45 transition-transform duration-300 flex-shrink-0 ml-4">+</span>
+                  <span className="text-5xl font-light text-gray-400 group-open:rotate-45 transition-transform">+</span>
                 </summary>
-                <div className="px-10 pb-10 text-[#86868b] text-xl leading-relaxed font-medium mt-2">
+                <div className="mt-8 text-2xl text-gray-600 font-semibold leading-relaxed">
                   {faq.a}
                 </div>
               </details>
@@ -168,21 +212,33 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 7. Footer */}
-      <footer className="py-24 px-6 bg-white border-t border-gray-100">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-12">
-          <div className="text-[#86868b] font-medium text-left">
-            <h3 className="text-2xl font-bold text-black mb-4 tracking-tight">OKPOS</h3>
-            <p className="text-lg mb-2">상담 및 도입 문의: <span className="text-black font-bold">1588-0000</span></p>
-            <p className="text-sm mt-4">© OKPOS. All rights reserved.</p>
+      {/* Footer */}
+      <footer className="px-6 py-32 bg-white pb-48">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-16">
+          <div>
+            <h3 className="text-5xl font-black tracking-tighter mb-6 text-[#111111]">OKPOS</h3>
+            <p className="text-2xl text-gray-500 font-bold tracking-tight">상담 및 도입 문의: <strong className="text-[#111111]">1588-0000</strong></p>
           </div>
-          <div className="flex gap-4">
-            <a href="#" className="px-6 py-3 rounded-full bg-[#f5f5f7] text-gray-600 font-bold hover:bg-gray-200 hover:text-black transition-colors">공식몰</a>
-            <a href="#" className="px-6 py-3 rounded-full bg-[#f5f5f7] text-gray-600 font-bold hover:bg-gray-200 hover:text-black transition-colors">유튜브</a>
-            <a href="#" className="px-6 py-3 rounded-full bg-[#f5f5f7] text-gray-600 font-bold hover:bg-gray-200 hover:text-black transition-colors">블로그</a>
+          <div className="flex flex-col sm:flex-row gap-8 sm:gap-12 text-xl font-bold text-gray-400">
+            <a href={LINKS.mall} target="_blank" rel="noreferrer" className="hover:text-[#111111] transition-colors">공식몰</a>
+            <a href={LINKS.store} target="_blank" rel="noreferrer" className="hover:text-[#111111] transition-colors">스마트스토어</a>
+            <a href={LINKS.insta} className="hover:text-[#111111] transition-colors">인스타그램</a>
+            <a href={LINKS.youtube} className="hover:text-[#111111] transition-colors">유튜브</a>
+            <a href={LINKS.blog} className="hover:text-[#111111] transition-colors">블로그</a>
           </div>
         </div>
       </footer>
-    </main>
+
+      {/* Sticky Bottom CTA */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 md:p-6 bg-white/90 backdrop-blur-lg border-t border-gray-200 z-50">
+        <div className="max-w-md mx-auto">
+          <button className="w-full bg-[#0066FF] hover:bg-blue-700 transition-colors text-white py-5 md:py-6 font-black text-2xl tracking-[-0.05em] flex items-center justify-center gap-4 shadow-2xl">
+            <span className="w-3 h-3 rounded-full bg-white animate-pulse"></span>
+            상담원 연결 대기중
+          </button>
+        </div>
+      </div>
+
+    </div>
   );
 }
