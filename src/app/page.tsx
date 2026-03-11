@@ -875,9 +875,30 @@ export default function App() {
               {/* Scrollable Content */}
               <div className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-10">
                 
-                <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-bold border border-red-100 leading-relaxed break-keep">
-                  <AlertCircle className="w-5 h-5 inline-block mr-2 -mt-0.5" />
-                  <strong>주의사항:</strong> 모든 사진은 <span className="underline decoration-2 underline-offset-4">사업자 등록증상의 주소지와 일치</span>하는 곳에서 촬영되어야 합니다. 자택(집)이 사업장 주소지인 경우에도 동일한 기준이 적용됩니다. 어떠한 업종에도 예외 없이 적용되는 카드사 필수 조건입니다.
+                <div className="bg-red-50 text-red-600 p-5 rounded-2xl text-sm sm:text-base font-bold border-2 border-red-200 leading-relaxed break-keep relative overflow-hidden">
+                  <motion.div
+                    animate={{
+                      x: ['-100%', '200%'],
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      repeatDelay: 1
+                    }}
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-red-200/50 to-transparent -skew-x-12 z-0"
+                  />
+                  <div className="relative z-10 flex flex-col gap-3">
+                    <div className="flex items-center gap-2">
+                      <AlertCircle className="w-6 h-6 shrink-0" />
+                      <span className="text-lg font-black tracking-tight">필독! 사진 촬영 핵심 요약</span>
+                    </div>
+                    <ul className="list-disc pl-5 space-y-1.5 marker:text-red-400">
+                      <li>아래 가이드에 맞춰 <strong>최소 6장의 사진</strong>을 넉넉히 첨부해주셔야 안전합니다.</li>
+                      <li>간판 글씨나 판매 물품이 <strong>화질 저하 없이 선명하게</strong> 보여야 합니다.</li>
+                      <li>모든 사진은 <strong>사업자 등록증상의 주소지(자택 포함)와 일치</strong>하는 곳에서 촬영되어야 합니다.</li>
+                    </ul>
+                  </div>
                 </div>
 
                 {/* 외부 사진 가이드 */}
@@ -888,17 +909,33 @@ export default function App() {
                   </h4>
                   <div className="space-y-6">
                     <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-gray-100">
-                      <div className="font-bold text-[#0F172A] mb-3">✅ 기본 조건: 매장 간판이나 전경이 전체적으로 보이게 촬영</div>
-                      <img src="/guide/outside1.png" alt="외부 전경 예시" className="w-full rounded-xl object-cover border border-gray-200" />
+                      <div className="font-black text-[#0F172A] text-lg mb-2 flex items-center gap-2">
+                        <span className="bg-blue-100 text-[#0055FF] px-2 py-0.5 rounded text-sm">외부 1</span>
+                        간판 및 전경
+                      </div>
+                      <p className="text-sm text-gray-600 font-bold mb-3 break-keep">매장의 간판과 외부 전체가 한눈에 들어오게 찍어주세요.</p>
+                      <img src="/guide/outside1.png" alt="외부 전경 예시" className="w-full rounded-xl object-cover border border-gray-200 shadow-sm" />
                     </div>
-                    <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-gray-100">
-                      <div className="font-bold text-[#0F172A] mb-3">✅ 출입문 개방: 출입문을 열어 매장 안쪽이 보이게 촬영</div>
-                      <img src="/guide/outside2.png" alt="출입문 개방 예시" className="w-full rounded-xl object-cover border border-gray-200" />
+                    
+                    <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-gray-100 relative overflow-hidden">
+                      <div className="absolute top-0 right-0 bg-amber-400 text-amber-950 text-xs font-black px-3 py-1 rounded-bl-xl shadow-sm z-10">
+                        간판이 아직 없다면?
+                      </div>
+                      <div className="font-black text-[#0F172A] text-lg mb-2 flex items-center gap-2">
+                        <span className="bg-amber-100 text-amber-600 px-2 py-0.5 rounded text-sm">외부 1-1</span>
+                        도로명 주소 표지판
+                      </div>
+                      <p className="text-sm text-gray-600 font-bold mb-3 break-keep">간판이 없다면, 사업자등록증상 주소지와 똑같은 건물 외벽의 도로명 주소판을 찍어주세요.</p>
+                      <img src="/guide/outside1-1.png" alt="도로명 주소 표지판 예시" className="w-full rounded-xl object-cover border border-gray-200 shadow-sm" />
                     </div>
+
                     <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-gray-100">
-                      <div className="font-bold text-[#0F172A] mb-2">💡 간판이 아직 없다면? (외부 1-1)</div>
-                      <p className="text-sm text-gray-500 mb-3 break-keep">건물 벽면에 부착된 도로명 주소 표지판(사업자 주소지와 일치)이 포함되도록 촬영해 주세요.</p>
-                      <img src="/guide/outside1-1.png" alt="도로명 주소 표지판 예시" className="w-full rounded-xl object-cover border border-gray-200" />
+                      <div className="font-black text-[#0F172A] text-lg mb-2 flex items-center gap-2">
+                        <span className="bg-blue-100 text-[#0055FF] px-2 py-0.5 rounded text-sm">외부 2</span>
+                        출입문 개방
+                      </div>
+                      <p className="text-sm text-gray-600 font-bold mb-3 break-keep">출입문을 활짝 열고 매장 안쪽이 보이도록 찍어주세요.</p>
+                      <img src="/guide/outside2.png" alt="출입문 개방 예시" className="w-full rounded-xl object-cover border border-gray-200 shadow-sm" />
                     </div>
                   </div>
                 </section>
@@ -911,17 +948,30 @@ export default function App() {
                   </h4>
                   <div className="space-y-6">
                     <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-gray-100">
-                      <div className="font-bold text-[#0F172A] mb-3">✅ 내부 전경 1: 매장 내부가 잘 보이도록 넓게 촬영</div>
-                      <img src="/guide/inside1.png" alt="내부 전경 예시 1" className="w-full rounded-xl object-cover border border-gray-200" />
+                      <div className="font-black text-[#0F172A] text-lg mb-2 flex items-center gap-2">
+                        <span className="bg-blue-100 text-[#0055FF] px-2 py-0.5 rounded text-sm">내부 1</span>
+                        매장 전체 전경
+                      </div>
+                      <p className="text-sm text-gray-600 font-bold mb-3 break-keep">구석에서 매장 내부가 최대한 넓게 다 보이도록 찍어주세요.</p>
+                      <img src="/guide/inside1.png" alt="내부 전경 예시 1" className="w-full rounded-xl object-cover border border-gray-200 shadow-sm" />
                     </div>
+
                     <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-gray-100">
-                      <div className="font-bold text-[#0F172A] mb-3">✅ 내부 전경 2: 다른 각도에서 매장이 넓게 보이게 촬영</div>
-                      <img src="/guide/inside2.png" alt="내부 전경 예시 2" className="w-full rounded-xl object-cover border border-gray-200" />
+                      <div className="font-black text-[#0F172A] text-lg mb-2 flex items-center gap-2">
+                        <span className="bg-blue-100 text-[#0055FF] px-2 py-0.5 rounded text-sm">내부 2</span>
+                        다른 각도 전경
+                      </div>
+                      <p className="text-sm text-gray-600 font-bold mb-3 break-keep">반대편 구석이나 다른 각도에서 매장이 넓게 보이게 한 장 더 찍어주세요.</p>
+                      <img src="/guide/inside2.png" alt="내부 전경 예시 2" className="w-full rounded-xl object-cover border border-gray-200 shadow-sm" />
                     </div>
+
                     <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-gray-100">
-                      <div className="font-bold text-[#0F172A] mb-2">✅ 업종 증빙: 판매 물품/서비스가 보이게 촬영</div>
-                      <p className="text-sm text-gray-500 mb-3 break-keep">(예: 네일샵 시술대, 헬스장 기구, 도소매 판매 물품 등)</p>
-                      <img src="/guide/inside3.png" alt="업종 증빙 사진 예시" className="w-full rounded-xl object-cover border border-gray-200" />
+                      <div className="font-black text-[#0F172A] text-lg mb-2 flex items-center gap-2">
+                        <span className="bg-blue-100 text-[#0055FF] px-2 py-0.5 rounded text-sm">내부 3</span>
+                        판매 물품 및 업종 증빙
+                      </div>
+                      <p className="text-sm text-gray-600 font-bold mb-3 break-keep">네일샵 시술대, 헬스장 기구, 진열된 상품 등 어떤 업종인지 확실히 알 수 있는 곳을 찍어주세요.</p>
+                      <img src="/guide/inside3.png" alt="업종 증빙 사진 예시" className="w-full rounded-xl object-cover border border-gray-200 shadow-sm" />
                     </div>
                   </div>
                 </section>
