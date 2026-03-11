@@ -337,28 +337,40 @@ export default function App() {
                       >
                         {/* Mobile Connector */}
                         {i < PROCESS.length - 1 && (
-                          <div className="lg:hidden absolute top-[3rem] left-6 w-[2px] h-[calc(100%-1rem)] bg-blue-100 -z-10"></div>
+                          <div className="lg:hidden absolute top-[3rem] left-[1.4rem] w-[2px] h-[calc(100%-1rem)] bg-blue-50 -z-10 overflow-hidden">
+                            <motion.div
+                              initial={{ y: "-100%" }}
+                              animate={{ y: "200%" }}
+                              transition={{
+                                duration: 1.5,
+                                repeat: Infinity,
+                                delay: i * 0.3,
+                                ease: "linear",
+                              }}
+                              className="w-full h-1/2 bg-gradient-to-b from-transparent via-[#0055FF] to-transparent opacity-50"
+                            />
+                          </div>
                         )}
                         {/* Desktop Connector */}
                         {i < PROCESS.length - 1 && (
-                          <div className="hidden lg:block absolute top-6 left-[60%] w-full h-[2px] bg-blue-100 -z-10"></div>
+                          <div className="hidden lg:block absolute top-6 left-[60%] w-full h-[2px] bg-blue-50 -z-10 overflow-hidden">
+                            <motion.div
+                              initial={{ x: "-100%" }}
+                              animate={{ x: "200%" }}
+                              transition={{
+                                duration: 1.5,
+                                repeat: Infinity,
+                                delay: i * 0.3,
+                                ease: "linear",
+                              }}
+                              className="w-1/2 h-full bg-gradient-to-r from-transparent via-[#0055FF] to-transparent opacity-50"
+                            />
+                          </div>
                         )}
                         
-                        <motion.div 
-                          animate={{ 
-                            scale: [1, 1.1, 1],
-                            backgroundColor: ["#FFFFFF", "#EFF6FF", "#FFFFFF"]
-                          }}
-                          transition={{ 
-                            duration: 2, 
-                            repeat: Infinity, 
-                            delay: i * 0.4,
-                            ease: "easeInOut"
-                          }}
-                          className="w-12 h-12 rounded-full bg-white border-[3px] border-[#0055FF] text-[#0055FF] flex items-center justify-center text-base font-black shrink-0 shadow-sm z-10"
-                        >
+                        <div className="w-12 h-12 rounded-full bg-white border-[3px] border-[#0055FF] text-[#0055FF] flex items-center justify-center text-base font-black shrink-0 shadow-sm z-10">
                           {i + 1}
-                        </motion.div>
+                        </div>
                         
                         <div className="flex flex-col lg:items-center pt-1 lg:pt-2 w-full">
                           <h4 className="text-lg font-black text-[#0F172A] mb-1.5 whitespace-nowrap">{step.title}</h4>
