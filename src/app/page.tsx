@@ -294,15 +294,34 @@ export default function App() {
                 <div className="inline-block p-4 bg-[#F8FAFC] rounded-3xl w-max mb-8 border border-gray-100 shadow-sm">
                   <Store className="w-10 h-10 text-[#0055FF]" />
                 </div>
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="px-3 py-1 bg-blue-50 text-[#0055FF] text-xs sm:text-sm font-black rounded-lg border border-blue-100 uppercase tracking-tighter">
+                    Since 1995
+                  </span>
+                  <span className="text-sm sm:text-base font-bold text-gray-400 tracking-tight">
+                    누적 30만 가맹점이 선택한 No.1 포스
+                  </span>
+                </div>
                 <h1 className="text-5xl sm:text-6xl md:text-7xl font-black tracking-[-0.05em] leading-[1.1] mb-6 text-black break-keep">
                   매장에 맞는<br />
                   포스 구성을<br />
                   미리 찾아보세요.
                 </h1>
-                <p className="text-xl sm:text-2xl text-gray-500 font-semibold tracking-tight mb-16 leading-relaxed break-keep">
+                <p className="text-xl sm:text-2xl text-gray-500 font-semibold tracking-tight mb-8 leading-relaxed break-keep">
                   선택지에 답하는 것만으로<br />
                   가장 합리적인 구성을 1분 만에 도출합니다.
                 </p>
+                
+                <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-5 mb-12 flex items-start gap-4">
+                  <AlertCircle className="w-6 h-6 text-[#0055FF] shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-[#0055FF] font-black text-lg tracking-tight mb-1">잠시만 기다려주세요!</p>
+                    <p className="text-blue-800 font-bold text-sm sm:text-base leading-relaxed break-keep">
+                      곧 <span className="underline decoration-2 underline-offset-4">1544-3640</span> 번호로 전문 상담원이 전화를 드릴 예정입니다. 잘 받아주시면 빠른 안내가 가능합니다.
+                    </p>
+                  </div>
+                </div>
+
                 <button
                   onClick={() => goToStep('step1')}
                   className="w-full h-24 bg-[#0F172A] hover:bg-black text-white text-2xl sm:text-3xl font-black rounded-[2rem] active:scale-[0.98] transition-all flex items-center justify-between px-8 shadow-2xl shadow-black/10 group mb-4"
@@ -563,10 +582,10 @@ export default function App() {
                 <div className="flex flex-col gap-4">
                   <button
                     onClick={handleCapture}
-                    className="w-full h-24 bg-[#0055FF] hover:bg-blue-700 text-white text-xl sm:text-2xl font-black rounded-[2rem] active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-[0_8px_30px_rgb(0,85,255,0.25)]"
+                    className="w-full h-24 bg-[#0055FF] hover:bg-blue-700 text-white text-xl sm:text-2xl font-black rounded-[2rem] active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-[0_8px_30px_rgb(0,85,255,0.25)] px-6"
                   >
                     <Download className="w-7 h-7" />
-                    결과 화면 캡처하고 상담하기
+                    <span className="break-keep">내 맞춤 구성 저장 완료! (상담 시 이 화면을 켜두세요)</span>
                   </button>
                   <button 
                     onClick={() => {
