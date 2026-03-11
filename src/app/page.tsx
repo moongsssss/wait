@@ -297,7 +297,7 @@ export default function App() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#0055FF] opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-[#0055FF]"></span>
           </span>
-          <span className="text-sm font-bold tracking-tight">📞 1544-3640 전화 대기 중</span>
+          <span className="text-sm font-bold tracking-tight">📞 1544-3640 혹은 070 전화 발송 대기 중</span>
         </div>
       </header>
 
@@ -416,7 +416,10 @@ export default function App() {
                   <div>
                     <p className="text-[#0055FF] font-black text-lg tracking-tight mb-1">잠시만 기다려주세요!</p>
                     <p className="text-blue-800 font-bold text-sm sm:text-base leading-relaxed break-keep">
-                      곧 <span className="underline decoration-2 underline-offset-4">1544-3640</span> 번호로 전문 상담원이 전화를 드릴 예정입니다. 잘 받아주시면 빠른 안내가 가능합니다.
+                      곧 <span className="font-black underline underline-offset-4 decoration-2">1544-3640</span> 혹은 <span className="font-black underline underline-offset-4 decoration-2">070</span>으로 시작하는 번호로 전문 상담원이 전화를 드릴 예정입니다. 잘 받아주시면 빠른 안내가 가능합니다.
+                    </p>
+                    <p className="mt-2 text-blue-600/80 text-xs sm:text-sm font-bold leading-relaxed underline underline-offset-4 decoration-1">
+                      *후스콜 등 필터링 기능을 꺼두셔야 전화 수신이 가능하니 참고해 주세요.
                     </p>
                   </div>
                 </div>
