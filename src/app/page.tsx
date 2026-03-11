@@ -32,11 +32,11 @@ const LINKS = [
 ];
 
 const PROCESS = [
-  { step: '01', title: '상담 진행', desc: '전문 컨설턴트가 매장 환경에 맞는 최적의 구성을 제안합니다.' },
-  { step: '02', title: '서류 수취', desc: '카드가맹점 신청 및 계약에 필요한 필수 서류를 제출합니다.' },
-  { step: '03', title: '계약 진행', desc: '정식 서비스 이용을 위한 전자 계약을 체결합니다.' },
-  { step: '04', title: '카드 가맹접수', desc: '9개 카드사 가맹 승인을 진행합니다. (영업일 기준 3~5일 소요)' },
-  { step: '05', title: '방문 설치', desc: '전문 엔지니어가 방문하여 기기 설치 및 사용법을 교육합니다.' },
+  { step: '01', title: '상담 진행', desc: '매장 환경에 맞는 최적의 디바이스 제안' },
+  { step: '02', title: '서류 수취', desc: '가맹점 등록에 필요한 필수 서류 수취' },
+  { step: '03', title: '계약 진행', desc: '최적의 맞춤형 디바이스와 솔루션 계약 진행' },
+  { step: '04', title: '카드 가맹접수', desc: '영업일 기준 3~5일 소요', highlight: true },
+  { step: '05', title: '방문 설치', desc: '도입 완료' },
 ];
 
 // --- Animations ---
@@ -260,26 +260,38 @@ export default function App() {
               <motion.div key="hero" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col h-full justify-center pb-20">
                 {/* 도입 프로세스 요약 가이드 (추가됨) */}
                 <div className="bg-[#F8FAFC] border border-blue-100 rounded-[2rem] p-6 sm:p-8 mb-12 shadow-sm">
-                  <div className="flex items-center gap-2 mb-6">
+                  <div className="flex items-center gap-2 mb-8">
                     <Info className="w-5 h-5 text-[#0055FF]" />
-                    <span className="text-sm font-black tracking-widest text-[#0055FF] uppercase">Service Process</span>
+                    <span className="text-sm font-black tracking-widest text-[#0055FF] uppercase">진행 프로세스</span>
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 relative">
+                  
+                  <div className="flex flex-col lg:flex-row gap-8 lg:gap-4 relative">
                     {PROCESS.map((step, i) => (
-                      <div key={i} className="flex flex-col gap-1.5 relative">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-6 h-6 rounded-full bg-[#0055FF] text-white flex items-center justify-center text-[10px] font-black shrink-0 shadow-sm shadow-blue-200">
-                            {step.step}
-                          </div>
-                          <span className="text-base sm:text-lg font-black text-[#0F172A] tracking-tighter whitespace-nowrap">{step.title}</span>
-                        </div>
+                      <div key={i} className="flex flex-row lg:flex-col items-start lg:items-center gap-4 flex-1 relative z-10 group">
+                        {/* Mobile Connector */}
                         {i < PROCESS.length - 1 && (
-                          <div className="hidden lg:block absolute top-3 left-[calc(100%-1.5rem)] w-6 h-[1.5px] bg-blue-100"></div>
+                          <div className="lg:hidden absolute top-[3rem] left-6 w-[2px] h-[calc(100%-1rem)] bg-blue-100 -z-10"></div>
                         )}
+                        {/* Desktop Connector */}
+                        {i < PROCESS.length - 1 && (
+                          <div className="hidden lg:block absolute top-6 left-[60%] w-full h-[2px] bg-blue-100 -z-10"></div>
+                        )}
+                        
+                        <div className="w-12 h-12 rounded-full bg-white border-[3px] border-[#0055FF] text-[#0055FF] flex items-center justify-center text-base font-black shrink-0 shadow-sm z-10">
+                          {i + 1}
+                        </div>
+                        
+                        <div className="flex flex-col lg:items-center pt-1 lg:pt-2 w-full">
+                          <h4 className="text-lg font-black text-[#0F172A] mb-1.5 whitespace-nowrap">{step.title}</h4>
+                          <p className={`text-sm font-bold leading-snug break-keep lg:text-center w-full max-w-[200px] lg:max-w-none ${step.highlight ? 'text-red-600 bg-red-50 px-2.5 py-1.5 rounded-lg inline-block border border-red-100' : 'text-gray-500'}`}>
+                            {step.desc}
+                          </p>
+                        </div>
                       </div>
                     ))}
                   </div>
-                  <div className="mt-6 pt-6 border-t border-gray-100 flex items-start gap-2 text-gray-400">
+                  
+                  <div className="mt-8 pt-6 border-t border-gray-100 flex items-start gap-2 text-gray-400">
                     <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
                     <p className="text-[11px] sm:text-xs font-bold leading-relaxed break-keep">
                       신규상담 및 신규 설치는 평일 영업시간 내에 순차적으로 진행됩니다.
@@ -598,7 +610,11 @@ export default function App() {
                     {p.title}
                     <div className="h-1 w-1 rounded-full bg-blue-200"></div>
                   </h3>
-                  <p className="text-lg text-[#64748B] font-semibold leading-relaxed break-keep max-w-lg">{p.desc}</p>
+                  <div className={`inline-block ${p.highlight ? 'bg-red-50 border border-red-100 px-4 py-2 rounded-xl' : ''}`}>
+                    <p className={`text-lg font-semibold leading-relaxed break-keep max-w-lg ${p.highlight ? 'text-red-600' : 'text-[#64748B]'}`}>
+                      {p.desc}
+                    </p>
+                  </div>
                 </div>
               </div>
             ))}
