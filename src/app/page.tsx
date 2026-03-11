@@ -593,33 +593,6 @@ export default function App() {
 
       <footer className="bg-[#F8FAFC] border-t border-[#E2E8F0] pt-24 pb-32 px-6 mt-auto">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-black tracking-tight mb-16 text-[#0F172A]">도입 진행 절차</h2>
-          <div className="flex flex-col gap-0 mb-32">
-            {PROCESS.map((p, i) => (
-              <div key={p.step} className="flex gap-6 sm:gap-10 group">
-                <div className="flex flex-col items-center">
-                  <div className="text-4xl sm:text-5xl font-black text-[#0055FF] tracking-tighter shrink-0 py-2">
-                    {p.step}
-                  </div>
-                  {i < PROCESS.length - 1 && (
-                    <div className="w-[2px] flex-1 bg-gradient-to-b from-[#0055FF]/20 to-transparent min-h-[40px] my-2"></div>
-                  )}
-                </div>
-                <div className="pt-4 pb-12">
-                  <h3 className="text-2xl font-black tracking-tight mb-3 text-[#0F172A] flex items-center gap-3">
-                    {p.title}
-                    <div className="h-1 w-1 rounded-full bg-blue-200"></div>
-                  </h3>
-                  <div className={`inline-block ${p.highlight ? 'bg-red-50 border border-red-100 px-4 py-2 rounded-xl' : ''}`}>
-                    <p className={`text-lg font-semibold leading-relaxed break-keep max-w-lg ${p.highlight ? 'text-red-600' : 'text-[#64748B]'}`}>
-                      {p.desc}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
           <h2 className="text-3xl sm:text-4xl font-black tracking-tight mb-8 text-[#0F172A]">공식 채널</h2>
           <div className="flex flex-col bg-white rounded-[2rem] border border-[#E2E8F0] overflow-hidden shadow-sm">
             {LINKS.map((link, idx) => (
