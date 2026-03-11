@@ -6,6 +6,7 @@ import { ArrowRight, CheckCircle2, ChevronLeft, CheckSquare, Square, Download, A
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -218,18 +219,29 @@ export default function App() {
     if (captureRef.current) {
       try {
         const canvas = await html2canvas(captureRef.current, { 
-          scale: 2,
-          backgroundColor: '#F8FAFC' // Softer background for capture
+          scale: 3, // Higher scale for PDF quality
+          useCORS: true,
+          backgroundColor: '#FFFFFF'
         });
-        const image = canvas.toDataURL("image/png");
-        const link = document.createElement("a");
-        link.href = image;
-        link.download = "okpos_recommendation.png";
-        link.click();
-        alert("구성이 갤러리에 저장되었습니다. 상담 시 이미지를 보여주시면 더욱 빠른 안내가 가능합니다.");
+        
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF({
+          orientation: 'portrait',
+          unit: 'mm',
+          format: 'a4'
+        });
+
+        const imgWidth = 210; // A4 width in mm
+        const pageHeight = 297; // A4 height in mm
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+        pdf.save("okpos_recommendation.pdf");
+        
+        alert("맞춤 구성 리포트가 PDF로 저장되었습니다. 상담 시 파일을 보여주시면 더욱 빠른 안내가 가능합니다.");
       } catch (e) {
-        console.error("Capture failed:", e);
-        alert("화면 저장에 실패했습니다. 직접 캡처를 이용해주세요.");
+        console.error("PDF generation failed:", e);
+        alert("파일 저장에 실패했습니다. 직접 캡처를 이용해주세요.");
       }
     }
   };
