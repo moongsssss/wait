@@ -503,10 +503,10 @@ export default function App() {
                 
                 <div className="flex flex-col gap-3 mb-12">
                   {[
-                    { id: 'dual', label: '고객이 주문/금액을 볼 수 있는 화면이 필요해요' },
-                    { id: 'barcode', label: '바코드를 찍어서 상품을 팔아야 해요' },
-                    { id: 'taxrefund', label: '외국인 관광객이 많이 와서 면세가 필요해요' },
-                    { id: 'backup', label: '혹시 인터넷이 끊겨도 결제는 꼭 돼야 해요' },
+                    { id: 'dual', label: '고객이 주문/금액을 볼 수 있는 화면이 필요해요', desc: '듀얼모니터 9.7인치 추가' },
+                    { id: 'barcode', label: '바코드를 찍어서 상품을 팔아야 해요', desc: '바코드 스캐너 추가' },
+                    { id: 'taxrefund', label: '외국인 관광객이 많이 와서 면세가 필요해요', desc: '택스리펀드 연동' },
+                    { id: 'backup', label: '혹시 인터넷이 끊겨도 결제는 꼭 돼야 해요', desc: '유선단말기(백업용) 세팅' },
                   ].map((hw) => {
                     const isSelected = selections.hardware.includes(hw.id);
                     return (
@@ -514,12 +514,15 @@ export default function App() {
                         key={hw.id}
                         onClick={() => toggleHardware(hw.id)}
                         className={cn(
-                          "w-full min-h-[88px] border-2 rounded-2xl text-left px-6 py-4 active:scale-[0.98] transition-all flex items-center gap-4 shadow-sm hover:shadow-md",
+                          "w-full min-h-[88px] border-2 rounded-2xl text-left px-6 py-4 active:scale-[0.98] transition-all flex items-start gap-4 shadow-sm hover:shadow-md",
                           isSelected ? "bg-[#0F172A] border-[#0F172A] text-white" : "bg-white border-[#E2E8F0] hover:border-[#0055FF] text-[#0F172A]"
                         )}
                       >
-                        {isSelected ? <CheckSquare className="w-7 h-7 text-[#0055FF] flex-shrink-0" /> : <Square className="w-7 h-7 text-gray-300 flex-shrink-0" />}
-                        <span className="text-lg sm:text-xl font-bold tracking-tight break-keep">{hw.label}</span>
+                        {isSelected ? <CheckSquare className="w-7 h-7 text-[#0055FF] flex-shrink-0 mt-0.5" /> : <Square className="w-7 h-7 text-gray-300 flex-shrink-0 mt-0.5" />}
+                        <div className="flex flex-col">
+                           <span className="text-lg sm:text-xl font-bold tracking-tight break-keep">{hw.label}</span>
+                           <span className={cn("text-sm font-semibold mt-1", isSelected ? "text-gray-300" : "text-gray-500")}>💡 {hw.desc}</span>
+                        </div>
                       </button>
                     );
                   })}
@@ -544,10 +547,10 @@ export default function App() {
                 
                 <div className="flex flex-col gap-3 mb-12">
                   {[
-                    { id: 'printer', label: '주방이 멀어서 종이 주문서가 나와야 해요' },
-                    { id: 'kds', label: '주방에서 종이 대신 모니터로 주문을 보고 싶어요' },
-                    { id: 'delivery', label: '배달의민족, 요기요 등 배달 주문이 많아요' },
-                    { id: 'orderpos', label: '직원들이 매장 곳곳에서 바로 주문을 넣어야 해요' },
+                    { id: 'printer', label: '주방이 멀어서 종이 주문서가 나와야 해요', desc: '주방프린터 추가' },
+                    { id: 'kds', label: '주방에서 종이 대신 모니터로 주문을 보고 싶어요', desc: '주방용 KDS 모니터 세팅' },
+                    { id: 'delivery', label: '배달의민족, 요기요 등 배달 주문이 많아요', desc: '배달매니저 연동' },
+                    { id: 'orderpos', label: '직원들이 매장 곳곳에서 바로 주문을 넣어야 해요', desc: '오더포스(서브 포스) 기기 추가' },
                   ].map((hw) => {
                     const isSelected = selections.hardware.includes(hw.id);
                     return (
@@ -555,12 +558,15 @@ export default function App() {
                         key={hw.id}
                         onClick={() => toggleHardware(hw.id)}
                         className={cn(
-                          "w-full min-h-[88px] border-2 rounded-2xl text-left px-6 py-4 active:scale-[0.98] transition-all flex items-center gap-4 shadow-sm hover:shadow-md",
+                          "w-full min-h-[88px] border-2 rounded-2xl text-left px-6 py-4 active:scale-[0.98] transition-all flex items-start gap-4 shadow-sm hover:shadow-md",
                           isSelected ? "bg-[#0F172A] border-[#0F172A] text-white" : "bg-white border-[#E2E8F0] hover:border-[#0055FF] text-[#0F172A]"
                         )}
                       >
-                        {isSelected ? <CheckSquare className="w-7 h-7 text-[#0055FF] flex-shrink-0" /> : <Square className="w-7 h-7 text-gray-300 flex-shrink-0" />}
-                        <span className="text-lg sm:text-xl font-bold tracking-tight break-keep">{hw.label}</span>
+                        {isSelected ? <CheckSquare className="w-7 h-7 text-[#0055FF] flex-shrink-0 mt-0.5" /> : <Square className="w-7 h-7 text-gray-300 flex-shrink-0 mt-0.5" />}
+                        <div className="flex flex-col">
+                           <span className="text-lg sm:text-xl font-bold tracking-tight break-keep">{hw.label}</span>
+                           <span className={cn("text-sm font-semibold mt-1", isSelected ? "text-gray-300" : "text-gray-500")}>💡 {hw.desc}</span>
+                        </div>
                       </button>
                     );
                   })}
@@ -660,11 +666,25 @@ export default function App() {
                     </p>
                   </div>
 
-                  <div className="mt-8 flex items-start gap-2.5 text-[#94A3B8] bg-gray-50/50 p-4 rounded-xl">
-                     <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                     <p className="text-xs sm:text-sm font-semibold leading-relaxed break-keep">
-                       본 구성은 참고용이며, 실제 상담 시 환경에 따라 최적화된 기기가 재안내될 수 있습니다.
-                     </p>
+                  <div className="mt-8 flex flex-col gap-3">
+                     <div className="flex items-center gap-3">
+                        <span className="px-2.5 py-1 bg-[#0F172A] text-white text-[11px] font-black rounded-md tracking-widest uppercase">안심 보증</span>
+                        <span className="text-sm font-bold text-[#0F172A]">오케이포스 본사 직영 책임 관리</span>
+                     </div>
+                     <div className="flex flex-col gap-2 bg-gray-50/50 p-4 rounded-xl text-sm font-semibold text-[#475569] leading-relaxed break-keep border border-gray-100">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-[#0055FF]" />
+                          <span>365일 언제나 연결되는 전문 고객센터 운영</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-[#0055FF]" />
+                          <span>전국 직영 유지보수 인프라망 자체 구축 완료</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-[#0055FF]" />
+                          <span>문제 발생 시 즉각적인 원격 전산 지원 서비스</span>
+                        </div>
+                     </div>
                   </div>
                 </div>
 
