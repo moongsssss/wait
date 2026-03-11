@@ -32,9 +32,11 @@ const LINKS = [
 ];
 
 const PROCESS = [
-  { step: '01', title: '문의 접수', desc: '현재 대기 중이며 기초 환경을 파악합니다.' },
-  { step: '02', title: '맞춤 제안', desc: '도출된 구성을 바탕으로 최적화된 견적을 안내합니다.' },
-  { step: '03', title: '설치 완료', desc: '전국 직영망을 통해 전문 기사가 설치를 진행합니다.' },
+  { step: '01', title: '상담 진행', desc: '전문 컨설턴트가 매장 환경에 맞는 최적의 구성을 제안합니다.' },
+  { step: '02', title: '서류 수취', desc: '카드가맹점 신청 및 계약에 필요한 필수 서류를 제출합니다.' },
+  { step: '03', title: '계약 진행', desc: '정식 서비스 이용을 위한 전자 계약을 체결합니다.' },
+  { step: '04', title: '카드 가맹접수', desc: '9개 카드사 가맹 승인을 진행합니다. (영업일 기준 3~5일 소요)' },
+  { step: '05', title: '방문 설치', desc: '전문 엔지니어가 방문하여 기기 설치 및 사용법을 교육합니다.' },
 ];
 
 // --- Animations ---
@@ -262,22 +264,18 @@ export default function App() {
                     <Info className="w-5 h-5 text-[#0055FF]" />
                     <span className="text-sm font-black tracking-widest text-[#0055FF] uppercase">Service Process</span>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 relative">
-                    {[
-                      { title: '상담 진행', desc: '전문 컨설턴트 배정' },
-                      { title: '서류 수취', desc: '카드가맹 필수 서류' },
-                      { title: '가맹 접수', desc: '영업일 3~5일 소요' },
-                      { title: '방문 설치', desc: '완료 시점에 방문' },
-                    ].map((step, i) => (
-                      <div key={i} className="flex flex-col gap-1 relative">
-                        <div className="flex items-center gap-3">
-                          <div className="w-6 h-6 rounded-full bg-[#0055FF] text-white flex items-center justify-center text-xs font-black shrink-0">
-                            {i + 1}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 relative">
+                    {PROCESS.map((step, i) => (
+                      <div key={i} className="flex flex-col gap-1.5 relative">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-6 h-6 rounded-full bg-[#0055FF] text-white flex items-center justify-center text-[10px] font-black shrink-0 shadow-sm shadow-blue-200">
+                            {step.step}
                           </div>
-                          <span className="text-lg font-black text-[#0F172A] tracking-tighter">{step.title}</span>
+                          <span className="text-base sm:text-lg font-black text-[#0F172A] tracking-tighter whitespace-nowrap">{step.title}</span>
                         </div>
-                        <p className="text-sm text-gray-500 font-bold ml-9">{step.desc}</p>
-                        {i < 3 && <div className="hidden lg:block absolute top-3 -right-2 w-4 h-[2px] bg-gray-200"></div>}
+                        {i < PROCESS.length - 1 && (
+                          <div className="hidden lg:block absolute top-3 left-[calc(100%-1.5rem)] w-6 h-[1.5px] bg-blue-100"></div>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -584,15 +582,23 @@ export default function App() {
       <footer className="bg-[#F8FAFC] border-t border-[#E2E8F0] pt-24 pb-32 px-6 mt-auto">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl sm:text-4xl font-black tracking-tight mb-16 text-[#0F172A]">도입 진행 절차</h2>
-          <div className="flex flex-col gap-12 mb-32">
-            {PROCESS.map((p) => (
-              <div key={p.step} className="flex gap-6 sm:gap-8">
-                <div className="text-5xl sm:text-6xl font-black text-[#CBD5E1] tracking-tighter shrink-0 w-16 sm:w-20">
-                  {p.step}
+          <div className="flex flex-col gap-0 mb-32">
+            {PROCESS.map((p, i) => (
+              <div key={p.step} className="flex gap-6 sm:gap-10 group">
+                <div className="flex flex-col items-center">
+                  <div className="text-4xl sm:text-5xl font-black text-[#0055FF] tracking-tighter shrink-0 py-2">
+                    {p.step}
+                  </div>
+                  {i < PROCESS.length - 1 && (
+                    <div className="w-[2px] flex-1 bg-gradient-to-b from-[#0055FF]/20 to-transparent min-h-[40px] my-2"></div>
+                  )}
                 </div>
-                <div className="pt-2">
-                  <h3 className="text-2xl font-black tracking-tight mb-2 text-[#0F172A]">{p.title}</h3>
-                  <p className="text-lg text-[#64748B] font-semibold leading-relaxed break-keep">{p.desc}</p>
+                <div className="pt-4 pb-12">
+                  <h3 className="text-2xl font-black tracking-tight mb-3 text-[#0F172A] flex items-center gap-3">
+                    {p.title}
+                    <div className="h-1 w-1 rounded-full bg-blue-200"></div>
+                  </h3>
+                  <p className="text-lg text-[#64748B] font-semibold leading-relaxed break-keep max-w-lg">{p.desc}</p>
                 </div>
               </div>
             ))}
