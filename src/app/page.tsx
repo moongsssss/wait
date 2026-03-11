@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, CheckCircle2, ChevronLeft, CheckSquare, Square, Download, AlertCircle, Info, Store, ShoppingBag, UtensilsCrossed, Coffee, Box, MapPin } from 'lucide-react';
+import { ArrowRight, CheckCircle2, ChevronLeft, CheckSquare, Square, Download, AlertCircle, Info, Store, ShoppingBag, UtensilsCrossed, Coffee, Box, MapPin, MonitorSmartphone, Smartphone, Building2 } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import html2canvas from 'html2canvas';
@@ -12,15 +12,13 @@ function cn(...inputs: ClassValue[]) {
 }
 
 // --- Types & Data ---
-type Step = 'hero' | 'step1' | 'stepSize' | 'step2A' | 'step2B' | 'step2C' | 'step3' | 'result';
+type Step = 'hero' | 'step1' | 'step2A' | 'step3' | 'result';
 
 interface Selections {
   type: string;
   typeLabel: string;
-  size?: string;
-  operation?: string;
-  special?: string;
   hardware: string[];
+  kiosk?: string;
 }
 
 const LINKS = [
@@ -78,28 +76,12 @@ export default function App() {
   };
 
   const handleStep1 = (type: string, label: string) => {
-    setSelections(prev => ({ ...prev, type, typeLabel: label, size: undefined, operation: undefined, special: undefined, hardware: [] }));
-    if (type === 'A') goToStep('stepSize'); 
-    else if (type === 'B') calculateResult('B'); 
-    else if (type === 'C') calculateResult('C'); 
-    else if (type === 'D') goToStep('step2B'); 
-    else if (type === 'E') calculateResult('E'); 
-    else if (type === 'F') goToStep('step2C'); 
-  };
-
-  const handleStepSize = (size: string) => {
-    setSelections(prev => ({ ...prev, size }));
-    goToStep('step2A');
-  }
-
-  const handleStep2A = (operation: string) => {
-    setSelections(prev => ({ ...prev, operation }));
-    goToStep('step3'); 
-  };
-
-  const handleStep2B = (special: string) => {
-    setSelections(prev => ({ ...prev, special }));
-    goToStep('step3'); 
+    setSelections({ type, typeLabel: label, hardware: [] });
+    if (type === 'A') {
+      goToStep('step2A'); 
+    } else {
+      calculateResult(type); 
+    }
   };
 
   const toggleHardware = (hw: string) => {
@@ -112,84 +94,91 @@ export default function App() {
     });
   };
 
-  const calculateResult = (flow: string) => {
-    let basicItems = ['포스 1세트', '네이버 커넥트 단말기 (기본 제공)'];
+  const handleStep3 = (kioskOpt: string) => {
+    setSelections(prev => ({ ...prev, kiosk: kioskOpt }));
+    calculateResult('complex', kioskOpt);
+  };
+
+  const calculateResult = (flow: string, kioskOpt?: string) => {
+    let basicItems: string[] = [];
     let additionalItems: string[] = [];
     let reasonText = '';
     
     let summaryArr = [selections.typeLabel];
-    if (selections.size) summaryArr.push(selections.size);
-    if (selections.operation) summaryArr.push(selections.operation);
-    if (selections.special) summaryArr.push(selections.special);
-    if (selections.hardware.length > 0) summaryArr.push('추가옵션 있음');
-    const summaryText = summaryArr.filter(Boolean).join(' · ');
-
+    
     if (flow === 'B') {
-      additionalItems.push('배달매니저 (프로그램)', '주방프린터');
-      reasonText = '배달 앱들을 일일이 확인할 필요 없이 배달매니저 하나로 통합하세요. 기본 제공되는 커넥트 단말기는 공간을 차지하지 않으면서 안정적인 결제를 지원합니다.';
+      basicItems = ['유선 단말기 단독 설치'];
+      reasonText = '포스기 없이 단순 결제만 필요하거나, 기존에 사용 중인 PC 연동 프로그램(병원, 헬스장, 미용실 등)이 있는 환경에 가장 적합한 경제적인 구성입니다.';
     } else if (flow === 'C') {
-      additionalItems.push('일반 키오스크', '또는 QR오더 키오스크 모드 (부착형 스티커)', '또는 네이버 커넥트 단말기 키오스크 모드');
-      reasonText = '테이크아웃 매장은 회전율이 생명이므로 고객이 직접 주문하는 키오스크가 필수입니다. 일반 키오스크를 두기 부담스럽다면 QR오더 스티커나 커넥트 단말기를 활용해 좁은 매장에서도 효율적인 결제 환경을 구축할 수 있습니다.';
-    } else if (flow === 'E') {
-      basicItems = ['정밀 진단 후 맞춤 구성 안내'];
-      reasonText = '무인 매장이나 팝업스토어는 환경에 따라 변수가 많습니다. 커넥트 단말기의 100% 활용 여부를 포함하여 전문 상담원이 정밀 진단을 진행합니다.';
-    } else if (flow === 'F1') {
-      basicItems = ['3인치 유선 카드단말기'];
-      reasonText = '포스기 없이 빠르고 간편하게 영수증 출력이 가능한 가장 경제적이고 베이직한 결제 세팅입니다.';
-    } else if (flow === 'F2') {
-      basicItems = ['무선단말기 (블루투스형 OR 통신형)'];
-      reasonText = '이동 결제에 필수적인 무선 장비입니다. 스마트폰과 블루투스로 연결하는 방식과, 통신료가 발생하지만 단독 개통해서 쓰는 통신형 모델 중 상황에 맞게 비교해 드립니다.';
+      basicItems = ['무선 단말기 (블루투스 스와이프 OR 개통형)'];
+      reasonText = '공간 제약이 있거나 이동 및 야외 결제가 필수적인 환경(배달, 푸드트럭, 플리마켓 등)에서 언제 어디서나 안정적인 결제를 지원합니다.';
     } else if (flow === 'complex') {
-      if (selections.type === 'A') {
-        if (selections.operation === '선불형') {
-          additionalItems.push('일반 키오스크', '또는 QR오더 키오스크 모드 (스티커 부착형)', '또는 네이버 커넥트 단말기 키오스크 모드');
-          reasonText = '바쁜 카운터 업무 분산을 위해 키오스크 도입을 추천합니다. 공간이나 비용이 부담스럽다면 스티커 부착형 QR오더를 키오스크로 활용하거나, 기본 제공되는 커넥트 단말기를 키오스크 모드로 즉시 전환하여 사용할 수 있습니다.';
-        } else if (selections.operation === '후불형') {
-          additionalItems.push('QR오더 (테이블오더 대체)', '오더포스 (직원용 주문기)');
-          reasonText = '고가의 테이블오더 태블릿 대신, 고객 휴대폰을 활용하는 QR오더를 도입해 초기 비용을 대폭 절감하세요. 주문은 포스로 즉시 전송되어 누락 없는 후불 결제가 가능합니다.';
-        }
-        
-        if (selections.size === '대형 매장 (테이블 15개 이상)' && selections.operation === '후불형') {
-             reasonText += ' 특히 대형 매장의 경우 직원들의 이동 동선을 줄이기 위해 오더포스와 여러 대의 주방프린터(또는 KDS) 도입을 적극 검토해야 합니다.';
-             if (!additionalItems.includes('주방프린터')) additionalItems.push('주방프린터 (복수 대수 권장)');
-        }
-      } else if (selections.type === 'D') {
-        if (selections.special === '바코드') {
-          additionalItems.push('유통 프로그램 별도 세팅', '바코드 스캐너');
-          reasonText = '기본 포스 세트에 방대한 재고 관리를 위한 유통 프로그램을 세팅합니다. 커넥트 단말기는 어떠한 유통 환경에서도 가장 빠르고 안정적인 결제 승인을 보장합니다.';
-        } else if (selections.special === '저울') {
-          additionalItems.push('유통 프로그램 별도 세팅', '바코드 스캐너', '호환 저울 연동 세팅 안내');
-          reasonText = '중량당 가격 계산이 필수적인 환경입니다. 당사 포스와 완벽히 연동되는 저울 모델을 별도로 안내 및 세팅해 드립니다. (저울 하드웨어 자체는 직접 판매하지 않습니다)';
-        } else if (selections.special === 'PC연동') {
-          additionalItems.push('기존 PC 연동 세팅');
-          reasonText = '사용 중인 기존 PC 프로그램(미용, 예약 등)이 있다면, 커넥트 단말기를 해당 PC와 직접 연동하여 이중 결제 작업 없이 한 번에 처리하세요.';
-        } else if (selections.special === '이동결제') {
-          additionalItems.push('통신형 무선단말기 (또는 블루투스 단말기)');
-          reasonText = '이동 결제가 잦은 경우, 포스 외에 휴대성을 극대화한 전용 무선 단말기를 추가 구성으로 추천해 드립니다.';
-        }
+      // Step 1: A (포스 기반 통합 관리)
+      
+      // Upgrade receipt printer if 'backup' is selected
+      if (selections.hardware.includes('backup')) {
+        basicItems = ['포스기', '유선단말기 (영수증 프린터 및 결제 백업용)', '금전함', '카드리더기', '네이버 커넥트 단말기', '키보드 & 마우스'];
+        reasonText += '인터넷이나 포스 고장 시에도 유선단말기를 통해 결제가 중단되지 않는 가장 안전한 환경이 세팅됩니다. ';
+        summaryArr.push('결제 백업 강화');
+      } else {
+        basicItems = ['포스기', '영수증 프린터', '금전함', '카드리더기', '네이버 커넥트 단말기', '키보드 & 마우스'];
       }
 
       if (selections.hardware.includes('dual')) {
-        additionalItems.push('고객용 듀얼모니터');
-        reasonText += ' 추가로 듀얼모니터를 통해 주문 내역을 투명하게 공유하여 신뢰도를 높이세요.';
+        additionalItems.push('포스 듀얼모니터 9.7인치');
+        summaryArr.push('고객 확인용 화면');
+      }
+      if (selections.hardware.includes('barcode')) {
+        additionalItems.push('바코드 스캐너 (건타입)');
+        summaryArr.push('바코드 스캔');
       }
       if (selections.hardware.includes('printer')) {
-        if (!additionalItems.includes('주방프린터') && !additionalItems.includes('주방프린터 (복수 대수 권장)')) {
-             additionalItems.push('주방프린터');
-        }
-        reasonText += ' 주방프린터는 홀과 주방의 물리적 거리를 극복하는 필수 추가 옵션입니다.';
+        additionalItems.push('주방프린터');
+        summaryArr.push('주방 주문서');
       }
       if (selections.hardware.includes('kds')) {
-        additionalItems.push('KDS (주방 디스플레이)');
-        reasonText += ' 종이 영수증 없는 KDS를 도입하여 스마트하고 깨끗한 주방 환경을 만드세요.';
+        additionalItems.push('주방 KDS');
+        reasonText += '주방에 종이 영수증 대신 KDS를 도입하여 위생적이고 체계적인 조리 관리가 가능합니다. ';
+        summaryArr.push('디지털 주방');
+      }
+      if (selections.hardware.includes('delivery')) {
+        additionalItems.push('배달매니저 (프로그램)');
+        reasonText += '배달 앱들을 하나로 통합 관리하는 배달매니저로 운영 효율을 극대화합니다. ';
+        summaryArr.push('배달 관리');
+      }
+      if (selections.hardware.includes('taxrefund')) {
+        additionalItems.push('택스리펀드 서비스 연동');
+        summaryArr.push('외국인 면세');
+      }
+      if (selections.hardware.includes('orderpos')) {
+        additionalItems.push('오더포스 (테이블형/벽걸이형)');
+        reasonText += '직원들이 먼 거리에서도 즉시 주문을 입력할 수 있는 오더포스로 동선을 단축시킵니다. ';
+        summaryArr.push('동선 최적화');
+      }
+
+      // Kiosk Options
+      if (kioskOpt === 'kiosk') {
+        additionalItems.push('전문 키오스크 기기');
+        summaryArr.push('키오스크');
+        reasonText += '고객이 직접 빠르고 편리하게 주문/결제할 수 있는 전문 키오스크 시스템을 함께 제안해 드립니다. ';
+      } else if (kioskOpt === 'qr') {
+        additionalItems.push('QR오더 시스템');
+        summaryArr.push('QR오더');
+        reasonText += '기기 도입 없이 고객의 스마트폰으로 테이블에서 직접 주문과 결제가 가능한 트렌디한 QR오더를 구축합니다. ';
+      } else if (kioskOpt === 'budget') {
+        additionalItems.push('네이버 커넥트 단말기 또는 QR오더 키오스크 모드');
+        summaryArr.push('비용 절감형 셀프결제');
+        reasonText += '기본 제공되는 네이버 커넥트 단말기를 키오스크 모드로 전환하거나 QR오더를 활용하여, 추가적인 기기 도입 비용 없이 셀프 주문 환경을 만듭니다. ';
       }
     }
+
+    const summaryText = summaryArr.filter(Boolean).join(' · ');
 
     setResult({
       title: '사장님 매장에 가장 합리적인 맞춤 구성입니다.',
       basic: basicItems,
       additional: additionalItems,
-      reason: reasonText,
+      reason: reasonText || '선택하신 운영 조건에 맞춘 가장 효율적이고 안정적인 포스 시스템입니다.',
       summaryText
     });
     
@@ -217,11 +206,14 @@ export default function App() {
   };
 
   // 1-3 Step Progress Indicator
-  const renderProgress = (stepNum: number) => (
+  const renderProgress = (stepNum: number, maxSteps: number = 3) => (
     <div className="flex items-center gap-2 mb-8">
-       {[1, 2, 3].map((s) => (
-         <div key={s} className={`h-1.5 flex-1 rounded-full transition-colors duration-500 ${s <= stepNum ? 'bg-[#0055FF]' : 'bg-gray-100'}`} />
-       ))}
+       {Array.from({ length: maxSteps }).map((_, idx) => {
+         const s = idx + 1;
+         return (
+           <div key={s} className={`h-1.5 flex-1 rounded-full transition-colors duration-500 ${s <= stepNum ? 'bg-[#0055FF]' : 'bg-gray-100'}`} />
+         );
+       })}
     </div>
   );
 
@@ -258,7 +250,7 @@ export default function App() {
             {/* HERO */}
             {currentStep === 'hero' && (
               <motion.div key="hero" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col h-full justify-center pb-20">
-                {/* 도입 프로세스 요약 가이드 (추가됨) */}
+                {/* 도입 프로세스 요약 가이드 */}
                 <div className="bg-[#F8FAFC] border border-blue-100 rounded-[2rem] p-6 sm:p-8 mb-12 shadow-sm">
                   <div className="flex items-center gap-2 mb-8">
                     <Info className="w-5 h-5 text-[#0055FF]" />
@@ -326,146 +318,50 @@ export default function App() {
             {/* STEP 1 */}
             {currentStep === 'step1' && (
               <motion.div key="step1" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col pb-20">
-                {renderProgress(1)}
-                <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-12 break-keep text-black">어떤 형태의 매장인가요?</h2>
+                {renderProgress(1, 3)}
+                <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-4 break-keep text-black">매장에 가장 적합한 결제 환경은 무엇인가요?</h2>
+                <p className="text-xl text-gray-500 font-bold mb-10">매장의 핵심 결제 방식을 선택해주세요.</p>
                 <div className="grid grid-cols-1 gap-4">
                   {[
-                    { id: 'A', label: '일반 홀 운영 (식당/카페)', icon: UtensilsCrossed },
-                    { id: 'B', label: '배달 전문 (홀 없음)', icon: Box },
-                    { id: 'C', label: '100% 테이크아웃', icon: Coffee },
-                    { id: 'D', label: '유통/도소매/서비스업', icon: ShoppingBag },
-                    { id: 'E', label: '특수 (무인매장/팝업)', icon: Store },
-                    { id: 'F', label: '단순 결제/이동형 (포스 불필요)', icon: MapPin },
+                    { id: 'A', label: '포스 기반 통합 관리', desc: '식당, 카페, 마트 등 일반적인 포스기가 필요한 매장', icon: MonitorSmartphone },
+                    { id: 'B', label: 'PC 연동 및 단순 결제', desc: '병원, 헬스장, 미용실 등 포스가 불필요한 매장', icon: Building2 },
+                    { id: 'C', label: '이동 및 야외 결제', desc: '푸드트럭, 플리마켓, 배달 등 무선 결제가 필수인 곳', icon: Smartphone },
                   ].map((item) => (
                     <button
                       key={item.id}
                       onClick={() => handleStep1(item.id, item.label)}
-                      className="group w-full min-h-[96px] bg-white border-2 border-[#E2E8F0] hover:border-[#0055FF] rounded-[2rem] text-xl sm:text-2xl font-black tracking-[-0.05em] text-left px-6 py-4 active:scale-[0.98] transition-all break-keep flex items-center gap-5 shadow-sm hover:shadow-md"
+                      className="group w-full bg-white border-2 border-[#E2E8F0] hover:border-[#0055FF] rounded-[2rem] text-left px-6 sm:px-8 py-6 active:scale-[0.98] transition-all break-keep flex items-center gap-5 shadow-sm hover:shadow-md"
                     >
-                      <div className="w-14 h-14 rounded-2xl bg-[#F8FAFC] flex items-center justify-center group-hover:bg-[#EFF6FF] transition-colors">
+                      <div className="w-14 h-14 rounded-2xl bg-[#F8FAFC] flex items-center justify-center group-hover:bg-[#EFF6FF] transition-colors shrink-0">
                         <item.icon className="w-7 h-7 text-gray-400 group-hover:text-[#0055FF]" />
                       </div>
-                      <span className="text-[#0F172A]">{item.label}</span>
+                      <div className="flex flex-col">
+                        <span className="text-xl sm:text-2xl font-black tracking-tight text-[#0F172A] mb-1">{item.label}</span>
+                        <span className="text-sm sm:text-base font-semibold text-gray-500">{item.desc}</span>
+                      </div>
                     </button>
                   ))}
                 </div>
               </motion.div>
             )}
 
-            {/* STEP 2 - Size */}
-            {currentStep === 'stepSize' && (
-              <motion.div key="stepSize" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col pb-20">
-                {renderProgress(2)}
-                <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-12 break-keep text-black">매장의 규모는 어느 정도인가요?</h2>
-                <div className="flex flex-col gap-4">
-                  <button
-                    onClick={() => handleStepSize('소형/중형 매장 (테이블 15개 미만)')}
-                    className="w-full bg-white border-2 border-[#E2E8F0] hover:border-[#0055FF] rounded-[2rem] text-left px-8 py-10 active:scale-[0.98] transition-all flex flex-col gap-3 shadow-sm hover:shadow-md"
-                  >
-                    <span className="text-3xl font-black tracking-tight text-black">소형/중형 매장</span>
-                    <span className="text-lg text-gray-500 font-semibold">테이블 15개 미만으로 비교적 동선이 짧음</span>
-                  </button>
-                  <button
-                    onClick={() => handleStepSize('대형 매장 (테이블 15개 이상)')}
-                    className="w-full bg-white border-2 border-[#E2E8F0] hover:border-[#0055FF] rounded-[2rem] text-left px-8 py-10 active:scale-[0.98] transition-all flex flex-col gap-3 shadow-sm hover:shadow-md"
-                  >
-                    <span className="text-3xl font-black tracking-tight text-black">대형 매장</span>
-                    <span className="text-lg text-gray-500 font-semibold">테이블 15개 이상으로 직원 이동 동선이 김</span>
-                  </button>
-                </div>
-              </motion.div>
-            )}
-
-            {/* STEP 2A */}
+            {/* STEP 2-A - Hardware Options */}
             {currentStep === 'step2A' && (
               <motion.div key="step2A" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col pb-20">
-                {renderProgress(2)}
-                <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-12 break-keep text-black">결제는 언제 이루어지나요?</h2>
-                <div className="flex flex-col gap-4">
-                  <button
-                    onClick={() => handleStep2A('선불형')}
-                    className="w-full bg-white border-2 border-[#E2E8F0] hover:border-[#0055FF] rounded-[2rem] text-left px-8 py-10 active:scale-[0.98] transition-all flex flex-col gap-3 shadow-sm hover:shadow-md"
-                  >
-                    <span className="text-3xl font-black tracking-tight text-black">선불형</span>
-                    <span className="text-lg text-gray-500 font-semibold">고객이 카운터에서 주문과 동시에 결제</span>
-                  </button>
-                  <button
-                    onClick={() => handleStep2A('후불형')}
-                    className="w-full bg-white border-2 border-[#E2E8F0] hover:border-[#0055FF] rounded-[2rem] text-left px-8 py-10 active:scale-[0.98] transition-all flex flex-col gap-3 shadow-sm hover:shadow-md"
-                  >
-                    <span className="text-3xl font-black tracking-tight text-black">후불형</span>
-                    <span className="text-lg text-gray-500 font-semibold">고객이 식사를 마친 후 나갈 때 일괄 결제</span>
-                  </button>
-                </div>
-              </motion.div>
-            )}
-
-            {/* STEP 2B */}
-            {currentStep === 'step2B' && (
-              <motion.div key="step2B" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col pb-20">
-                {renderProgress(2)}
-                <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-12 break-keep text-black">특수 운영 조건이 있나요?</h2>
-                <div className="flex flex-col gap-4">
-                  {[
-                    { id: '바코드', label: '상품 바코드 스캔 위주' },
-                    { id: '저울', label: '저울 연동 필수 (정육/수산)' },
-                    { id: 'PC연동', label: '기존 PC 프로그램 연동' },
-                    { id: '이동결제', label: '이동 결제가 잦음 (출장/배달)' },
-                  ].map((item) => (
-                    <button
-                      key={item.id}
-                      onClick={() => handleStep2B(item.label)}
-                      className="w-full min-h-[96px] bg-white border-2 border-[#E2E8F0] hover:border-[#0055FF] rounded-[2rem] text-2xl font-black tracking-[-0.05em] text-left px-8 active:scale-[0.98] transition-all break-keep flex items-center shadow-sm hover:shadow-md text-[#0F172A]"
-                    >
-                      {item.label}
-                    </button>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-
-            {/* STEP 2C */}
-            {currentStep === 'step2C' && (
-              <motion.div key="step2C" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col pb-20">
-                {renderProgress(2)}
-                <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-12 break-keep text-black">주로 어디서 결제가 이루어지나요?</h2>
-                <div className="flex flex-col gap-4">
-                  <button
-                    onClick={() => {
-                      setSelections(prev => ({ ...prev, special: '고정카운터 단독결제' }));
-                      calculateResult('F1');
-                    }}
-                    className="w-full bg-white border-2 border-[#E2E8F0] hover:border-[#0055FF] rounded-[2rem] text-left px-8 py-10 active:scale-[0.98] transition-all flex flex-col gap-3 shadow-sm hover:shadow-md"
-                  >
-                    <span className="text-2xl sm:text-3xl font-black tracking-tight text-black break-keep">매장 내 고정된 카운터</span>
-                    <span className="text-base sm:text-lg text-gray-500 font-semibold break-keep">단순 결제와 영수증 출력만 필요함</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      setSelections(prev => ({ ...prev, special: '무선/이동 결제' }));
-                      calculateResult('F2');
-                    }}
-                    className="w-full bg-white border-2 border-[#E2E8F0] hover:border-[#0055FF] rounded-[2rem] text-left px-8 py-10 active:scale-[0.98] transition-all flex flex-col gap-3 shadow-sm hover:shadow-md"
-                  >
-                    <span className="text-2xl sm:text-3xl font-black tracking-tight text-black break-keep">야외, 플리마켓, 배달 등</span>
-                    <span className="text-base sm:text-lg text-gray-500 font-semibold break-keep">이동이 잦아 무선 결제가 필수임</span>
-                  </button>
-                </div>
-              </motion.div>
-            )}
-
-            {/* STEP 3 - Hardware */}
-            {currentStep === 'step3' && (
-              <motion.div key="step3" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col pb-20">
-                {renderProgress(3)}
-                <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-4 break-keep text-black">추가 옵션을 골라주세요.</h2>
-                <p className="text-xl text-gray-500 font-bold mb-10">해당 없으면 바로 넘어가세요.</p>
+                {renderProgress(2, 3)}
+                <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-4 break-keep text-black">매장 운영에 필요한 항목을 모두 골라주세요.</h2>
+                <p className="text-xl text-gray-500 font-bold mb-10">중복 선택이 가능하며, 해당 없으면 바로 넘어가세요.</p>
                 
-                <div className="flex flex-col gap-4 mb-12">
+                <div className="flex flex-col gap-3 mb-12">
                   {[
-                    { id: 'dual', label: '고객용 결제 화면(듀얼모니터) 필요' },
-                    { id: 'printer', label: '주방이 멀어 주방프린터 필요' },
-                    { id: 'kds', label: '주방에 종이 대신 모니터(KDS) 필요' },
+                    { id: 'dual', label: '고객에게 결제 금액이나 화면을 보여줘야 함' },
+                    { id: 'barcode', label: '바코드를 찍어서 상품을 판매함' },
+                    { id: 'printer', label: '주방이 멀거나 별도의 주문서가 필요함' },
+                    { id: 'kds', label: '주방에서 종이 대신 화면으로 주문을 처리하고 싶음' },
+                    { id: 'delivery', label: '배달 주문이 많음' },
+                    { id: 'taxrefund', label: '외국인 관광객 방문이 많음' },
+                    { id: 'orderpos', label: '테이블이나 벽에서 직원이 직접 주문을 넣어야 함' },
+                    { id: 'backup', label: '혹시 모를 포스 고장에 대비할 결제 백업 장치가 필요함' },
                   ].map((hw) => {
                     const isSelected = selections.hardware.includes(hw.id);
                     return (
@@ -473,23 +369,50 @@ export default function App() {
                         key={hw.id}
                         onClick={() => toggleHardware(hw.id)}
                         className={cn(
-                          "w-full min-h-[104px] border-2 rounded-[2rem] text-left px-8 py-4 active:scale-[0.98] transition-all flex items-center gap-5 shadow-sm hover:shadow-md",
+                          "w-full min-h-[88px] border-2 rounded-2xl text-left px-6 py-4 active:scale-[0.98] transition-all flex items-center gap-4 shadow-sm hover:shadow-md",
                           isSelected ? "bg-[#0F172A] border-[#0F172A] text-white" : "bg-white border-[#E2E8F0] hover:border-[#0055FF] text-[#0F172A]"
                         )}
                       >
-                        {isSelected ? <CheckSquare className="w-8 h-8 text-[#0055FF] flex-shrink-0" /> : <Square className="w-8 h-8 text-gray-300 flex-shrink-0" />}
-                        <span className="text-xl sm:text-2xl font-black tracking-tight break-keep">{hw.label}</span>
+                        {isSelected ? <CheckSquare className="w-7 h-7 text-[#0055FF] flex-shrink-0" /> : <Square className="w-7 h-7 text-gray-300 flex-shrink-0" />}
+                        <span className="text-lg sm:text-xl font-bold tracking-tight break-keep">{hw.label}</span>
                       </button>
                     );
                   })}
                 </div>
 
                 <button
-                  onClick={() => calculateResult('complex')}
-                  className="w-full h-24 bg-[#0F172A] hover:bg-black text-white text-2xl font-black rounded-[2rem] active:scale-[0.98] transition-transform shadow-xl"
+                  onClick={() => goToStep('step3')}
+                  className="w-full h-24 bg-[#0F172A] hover:bg-black text-white text-2xl font-black rounded-[2rem] active:scale-[0.98] transition-transform shadow-xl flex items-center justify-between px-8"
                 >
-                  조합 완료하고 결과 보기
+                  <span>다음 단계로</span>
+                  <ArrowRight className="w-7 h-7" />
                 </button>
+              </motion.div>
+            )}
+
+            {/* STEP 3 - Self Order */}
+            {currentStep === 'step3' && (
+              <motion.div key="step3" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col pb-20">
+                {renderProgress(3, 3)}
+                <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-12 break-keep text-black">고객이 직접 주문/결제하는 시스템이 필요하신가요?</h2>
+                
+                <div className="flex flex-col gap-4">
+                  {[
+                    { id: 'kiosk', label: '전문 키오스크 기기 도입', desc: '가장 직관적이고 보편적인 셀프 결제 환경' },
+                    { id: 'qr', label: '테이블에서 직접 주문/결제', desc: '고객 스마트폰을 활용한 최신 QR오더 시스템' },
+                    { id: 'budget', label: '셀프 결제는 필요하지만 기기 비용이 부담됨', desc: '단말기 키오스크 모드 등 가성비 솔루션 제안' },
+                    { id: 'none', label: '필요 없음', desc: '직원이 직접 결제를 모두 진행함' },
+                  ].map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => handleStep3(item.id)}
+                      className="w-full bg-white border-2 border-[#E2E8F0] hover:border-[#0055FF] rounded-[2rem] text-left px-6 sm:px-8 py-6 active:scale-[0.98] transition-all flex flex-col gap-2 shadow-sm hover:shadow-md"
+                    >
+                      <span className="text-xl sm:text-2xl font-black tracking-tight text-black">{item.label}</span>
+                      <span className="text-sm sm:text-base text-gray-500 font-semibold">{item.desc}</span>
+                    </button>
+                  ))}
+                </div>
               </motion.div>
             )}
 
@@ -516,12 +439,12 @@ export default function App() {
                   )}
 
                   <div className="mb-10">
-                    <span className="text-[#0055FF] font-black text-sm mb-4 block border-b border-gray-100 pb-3 tracking-widest">기본 구성품</span>
+                    <span className="text-[#0055FF] font-black text-sm mb-4 block border-b border-gray-100 pb-3 tracking-widest">기본 구성</span>
                     <div className="flex flex-col gap-4">
                       {result.basic.map((item, idx) => (
                         <div key={idx} className="flex items-start gap-4">
                           <span className="w-2.5 h-2.5 rounded-full bg-[#0F172A] flex-shrink-0 mt-2.5"></span>
-                          <span className="text-2xl font-black text-[#0F172A] tracking-[-0.05em] leading-tight break-keep">{item}</span>
+                          <span className="text-xl sm:text-2xl font-black text-[#0F172A] tracking-[-0.05em] leading-tight break-keep">{item}</span>
                         </div>
                       ))}
                     </div>
@@ -529,12 +452,12 @@ export default function App() {
 
                   {result.additional.length > 0 && (
                     <div className="mb-10">
-                      <span className="text-[#0055FF] font-black text-sm mb-4 block border-b border-gray-100 pb-3 tracking-widest">추가 구성품 및 서비스</span>
+                      <span className="text-[#0055FF] font-black text-sm mb-4 block border-b border-gray-100 pb-3 tracking-widest">추가 솔루션 및 장비</span>
                       <div className="flex flex-col gap-4">
                         {result.additional.map((item, idx) => (
                           <div key={idx} className="flex items-start gap-4">
                             <span className="w-2.5 h-2.5 rounded-full bg-[#94A3B8] flex-shrink-0 mt-2.5"></span>
-                            <span className="text-2xl font-black text-[#475569] tracking-[-0.05em] leading-tight break-keep">{item}</span>
+                            <span className="text-xl sm:text-2xl font-black text-[#475569] tracking-[-0.05em] leading-tight break-keep">{item}</span>
                           </div>
                         ))}
                       </div>
@@ -555,15 +478,35 @@ export default function App() {
                   </div>
                 </div>
 
-                {selections.type !== 'F' && (
-                  <div className="bg-gradient-to-br from-blue-50 to-[#EFF6FF] border border-blue-100/50 rounded-[2.5rem] p-8 sm:p-10 mb-12 shadow-sm">
-                    <span className="inline-block px-3 py-1 bg-[#0055FF]/10 text-[#0055FF] font-black text-xs rounded-lg mb-4 tracking-widest">추천 소프트웨어</span>
-                    <h4 className="text-2xl sm:text-3xl font-black tracking-tight mb-3 text-[#0F172A]">단골플러스 & 오늘얼마</h4>
-                    <p className="text-[#475569] font-medium text-lg leading-relaxed break-keep">
-                      가볍게 도입하여 포인트 적립(CRM)과 실시간 모바일 매출 관리 환경을 구축하세요.
-                    </p>
+                {/* 추가 추천 서비스: 단골플러스 */}
+                <div className="bg-gradient-to-br from-blue-50 to-[#EFF6FF] border border-blue-100/50 rounded-[2.5rem] p-8 sm:p-10 mb-6 shadow-sm">
+                  <span className="inline-block px-3 py-1 bg-[#0055FF]/10 text-[#0055FF] font-black text-xs rounded-lg mb-4 tracking-widest">추천 소프트웨어</span>
+                  <h4 className="text-2xl sm:text-3xl font-black tracking-tight mb-3 text-[#0F172A]">단골플러스</h4>
+                  <p className="text-[#475569] font-medium text-lg leading-relaxed break-keep mb-0">
+                    CRM과 포인트 관리를 가볍게 도입하여 재방문율을 높이는 환경을 구축하세요.
+                  </p>
+                </div>
+
+                {/* 통신/보안 컨설팅 패키지 링크 */}
+                <div className="bg-white border-2 border-gray-100 rounded-[2.5rem] p-8 sm:p-10 mb-12 shadow-sm">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Building2 className="w-6 h-6 text-gray-400" />
+                    <h4 className="text-xl font-black tracking-tight text-[#0F172A]">통신/보안 컨설팅 패키지</h4>
                   </div>
-                )}
+                  <p className="text-[#475569] font-semibold text-lg leading-relaxed break-keep mb-6">
+                    인터넷과 CCTV도 오케이포스에서 한 번에 해결하세요.
+                  </p>
+                  <div className="flex flex-col gap-3">
+                    <a href="https://www.okposmall.co.kr/internet" target="_blank" rel="noreferrer" className="flex items-center justify-between bg-gray-50 hover:bg-gray-100 px-6 py-4 rounded-2xl transition-colors font-bold text-[#334155]">
+                      <span>인터넷 패키지 상담하기</span>
+                      <ArrowRight className="w-5 h-5 text-gray-400" />
+                    </a>
+                    <a href="https://www.okposmall.co.kr/cctv" target="_blank" rel="noreferrer" className="flex items-center justify-between bg-gray-50 hover:bg-gray-100 px-6 py-4 rounded-2xl transition-colors font-bold text-[#334155]">
+                      <span>CCTV 패키지 상담하기</span>
+                      <ArrowRight className="w-5 h-5 text-gray-400" />
+                    </a>
+                  </div>
+                </div>
 
                 <div className="flex flex-col gap-4">
                   <button
