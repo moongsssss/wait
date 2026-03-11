@@ -421,15 +421,31 @@ export default function App() {
                   </div>
                 </div>
 
-                <button
+                <motion.button
                   onClick={() => goToStep('step1')}
-                  className="w-full h-24 bg-[#0F172A] hover:bg-black text-white text-2xl sm:text-3xl font-black rounded-[2rem] active:scale-[0.98] transition-all flex items-center justify-between px-8 shadow-2xl shadow-black/10 group mb-4"
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full h-24 bg-[#0F172A] hover:bg-black text-white text-2xl sm:text-3xl font-black rounded-[2rem] transition-all flex items-center justify-between px-8 shadow-2xl shadow-black/10 group mb-4 relative overflow-hidden"
                 >
-                  <span>구성 찾기 시작</span>
-                  <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center group-hover:bg-white/20 transition-colors">
+                  {/* Shimmer Effect */}
+                  <motion.div
+                    animate={{
+                      x: ['-100%', '200%'],
+                    }}
+                    transition={{
+                      duration: 2.5,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      repeatDelay: 1
+                    }}
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12"
+                  />
+                  
+                  <span className="relative z-10">구성 찾기 시작</span>
+                  <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center group-hover:bg-white/20 transition-colors relative z-10">
                     <ArrowRight className="w-6 h-6" strokeWidth={3} />
                   </div>
-                </button>
+                </motion.button>
                 <button
                   onClick={() => {
                     setResult({
