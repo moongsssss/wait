@@ -418,8 +418,8 @@ export default function App() {
                     <p className="text-blue-800 font-bold text-sm sm:text-base leading-relaxed break-keep">
                       곧 <span className="font-black underline underline-offset-4 decoration-2">1544-3640</span> 혹은 <span className="font-black underline underline-offset-4 decoration-2">070</span>으로 시작하는 번호로 전문 상담원이 전화를 드릴 예정입니다. 잘 받아주시면 빠른 안내가 가능합니다.
                     </p>
-                    <p className="mt-2 text-blue-600/80 text-xs sm:text-sm font-bold leading-relaxed underline underline-offset-4 decoration-1">
-                      *후스콜 등 필터링 기능을 꺼두셔야 전화 수신이 가능하니 참고해 주세요.
+                    <p className="mt-3 text-red-600 text-xs sm:text-sm font-black leading-relaxed underline underline-offset-4 decoration-2">
+                      * 핸드폰 내 필터링 기능을 꺼두셔야 전화 수신이 가능하니 참고해 주세요.
                     </p>
                   </div>
                 </div>
