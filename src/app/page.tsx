@@ -12,7 +12,7 @@ function cn(...inputs: ClassValue[]) {
 }
 
 // --- Types & Data ---
-type Step = 'hero' | 'step1' | 'step2A' | 'step3' | 'result';
+type Step = 'hero' | 'step1' | 'step2A' | 'step2B' | 'step3' | 'result';
 
 interface Selections {
   type: string;
@@ -318,7 +318,7 @@ export default function App() {
             {/* STEP 1 */}
             {currentStep === 'step1' && (
               <motion.div key="step1" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col pb-20">
-                {renderProgress(1, 3)}
+                {renderProgress(1, 4)}
                 <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-4 break-keep text-black">어떤 형태의 매장을 운영하시나요?</h2>
                 <p className="text-xl text-gray-500 font-bold mb-10">가장 비슷한 매장 환경을 골라주세요.</p>
                 <div className="grid grid-cols-1 gap-4">
@@ -345,23 +345,60 @@ export default function App() {
               </motion.div>
             )}
 
-            {/* STEP 2-A - Hardware Options */}
+            {/* STEP 2-A - Hardware Options (Front) */}
             {currentStep === 'step2A' && (
               <motion.div key="step2A" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col pb-20">
-                {renderProgress(2, 3)}
-                <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-4 break-keep text-black">매장에 필요한 추가 기능을 골라주세요.</h2>
-                <p className="text-xl text-gray-500 font-bold mb-10">여러 개 선택할 수 있어요. (해당 없으면 바로 다음으로)</p>
+                {renderProgress(2, 4)}
+                <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-4 break-keep text-black">카운터와 결제 쪽에 필요한 기능이 있나요?</h2>
+                <p className="text-xl text-gray-500 font-bold mb-10">해당 없으면 바로 다음으로 넘어가세요. (중복 선택 가능)</p>
                 
                 <div className="flex flex-col gap-3 mb-12">
                   {[
                     { id: 'dual', label: '고객이 주문/금액을 볼 수 있는 화면이 필요해요' },
                     { id: 'barcode', label: '바코드를 찍어서 상품을 팔아야 해요' },
+                    { id: 'taxrefund', label: '외국인 관광객이 많이 와서 면세가 필요해요' },
+                    { id: 'backup', label: '혹시 인터넷이 끊겨도 결제는 꼭 돼야 해요' },
+                  ].map((hw) => {
+                    const isSelected = selections.hardware.includes(hw.id);
+                    return (
+                      <button
+                        key={hw.id}
+                        onClick={() => toggleHardware(hw.id)}
+                        className={cn(
+                          "w-full min-h-[88px] border-2 rounded-2xl text-left px-6 py-4 active:scale-[0.98] transition-all flex items-center gap-4 shadow-sm hover:shadow-md",
+                          isSelected ? "bg-[#0F172A] border-[#0F172A] text-white" : "bg-white border-[#E2E8F0] hover:border-[#0055FF] text-[#0F172A]"
+                        )}
+                      >
+                        {isSelected ? <CheckSquare className="w-7 h-7 text-[#0055FF] flex-shrink-0" /> : <Square className="w-7 h-7 text-gray-300 flex-shrink-0" />}
+                        <span className="text-lg sm:text-xl font-bold tracking-tight break-keep">{hw.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <button
+                  onClick={() => goToStep('step2B')}
+                  className="w-full h-24 bg-[#0F172A] hover:bg-black text-white text-2xl font-black rounded-[2rem] active:scale-[0.98] transition-transform shadow-xl flex items-center justify-between px-8"
+                >
+                  <span>다음 단계로</span>
+                  <ArrowRight className="w-7 h-7" />
+                </button>
+              </motion.div>
+            )}
+
+            {/* STEP 2-B - Hardware Options (Back/Kitchen) */}
+            {currentStep === 'step2B' && (
+              <motion.div key="step2B" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col pb-20">
+                {renderProgress(3, 4)}
+                <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-4 break-keep text-black">주방이나 매장 운영에 필요한 기능이 있나요?</h2>
+                <p className="text-xl text-gray-500 font-bold mb-10">해당 없으면 바로 다음으로 넘어가세요. (중복 선택 가능)</p>
+                
+                <div className="flex flex-col gap-3 mb-12">
+                  {[
                     { id: 'printer', label: '주방이 멀어서 종이 주문서가 나와야 해요' },
                     { id: 'kds', label: '주방에서 종이 대신 모니터로 주문을 보고 싶어요' },
                     { id: 'delivery', label: '배달의민족, 요기요 등 배달 주문이 많아요' },
-                    { id: 'taxrefund', label: '외국인 관광객이 많이 와서 면세가 필요해요' },
                     { id: 'orderpos', label: '직원들이 매장 곳곳에서 바로 주문을 넣어야 해요' },
-                    { id: 'backup', label: '혹시 인터넷이 끊겨도 결제는 꼭 돼야 해요' },
                   ].map((hw) => {
                     const isSelected = selections.hardware.includes(hw.id);
                     return (
@@ -393,7 +430,7 @@ export default function App() {
             {/* STEP 3 - Self Order */}
             {currentStep === 'step3' && (
               <motion.div key="step3" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col pb-20">
-                {renderProgress(3, 3)}
+                {renderProgress(4, 4)}
                 <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-12 break-keep text-black">손님이 직접 주문하고 결제하는 기능이 필요하신가요?</h2>
                 
                 <div className="flex flex-col gap-4">
