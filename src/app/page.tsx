@@ -319,13 +319,13 @@ export default function App() {
             {currentStep === 'step1' && (
               <motion.div key="step1" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col pb-20">
                 {renderProgress(1, 3)}
-                <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-4 break-keep text-black">매장에 가장 적합한 결제 환경은 무엇인가요?</h2>
-                <p className="text-xl text-gray-500 font-bold mb-10">매장의 핵심 결제 방식을 선택해주세요.</p>
+                <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-4 break-keep text-black">어떤 형태의 매장을 운영하시나요?</h2>
+                <p className="text-xl text-gray-500 font-bold mb-10">가장 비슷한 매장 환경을 골라주세요.</p>
                 <div className="grid grid-cols-1 gap-4">
                   {[
-                    { id: 'A', label: '포스 기반 통합 관리', desc: '식당, 카페, 마트 등 일반적인 포스기가 필요한 매장', icon: MonitorSmartphone },
-                    { id: 'B', label: 'PC 연동 및 단순 결제', desc: '병원, 헬스장, 미용실 등 포스가 불필요한 매장', icon: Building2 },
-                    { id: 'C', label: '이동 및 야외 결제', desc: '푸드트럭, 플리마켓, 배달 등 무선 결제가 필수인 곳', icon: Smartphone },
+                    { id: 'A', label: '일반적인 식당 / 카페 / 마트', desc: '메뉴를 누르고 결제하는 포스기가 꼭 필요한 곳', icon: MonitorSmartphone },
+                    { id: 'B', label: '단순 결제 카운터 / 병원 / 미용실', desc: '포스기 없이 카드 결제만 되거나, 기존 PC에 연결할 곳', icon: Building2 },
+                    { id: 'C', label: '배달 전문 / 푸드트럭 / 플리마켓', desc: '야외나 이동하면서 선 없이 결제해야 하는 곳', icon: Smartphone },
                   ].map((item) => (
                     <button
                       key={item.id}
@@ -349,19 +349,19 @@ export default function App() {
             {currentStep === 'step2A' && (
               <motion.div key="step2A" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col pb-20">
                 {renderProgress(2, 3)}
-                <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-4 break-keep text-black">매장 운영에 필요한 항목을 모두 골라주세요.</h2>
-                <p className="text-xl text-gray-500 font-bold mb-10">중복 선택이 가능하며, 해당 없으면 바로 넘어가세요.</p>
+                <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-4 break-keep text-black">매장에 필요한 추가 기능을 골라주세요.</h2>
+                <p className="text-xl text-gray-500 font-bold mb-10">여러 개 선택할 수 있어요. (해당 없으면 바로 다음으로)</p>
                 
                 <div className="flex flex-col gap-3 mb-12">
                   {[
-                    { id: 'dual', label: '고객에게 결제 금액이나 화면을 보여줘야 함' },
-                    { id: 'barcode', label: '바코드를 찍어서 상품을 판매함' },
-                    { id: 'printer', label: '주방이 멀거나 별도의 주문서가 필요함' },
-                    { id: 'kds', label: '주방에서 종이 대신 화면으로 주문을 처리하고 싶음' },
-                    { id: 'delivery', label: '배달 주문이 많음' },
-                    { id: 'taxrefund', label: '외국인 관광객 방문이 많음' },
-                    { id: 'orderpos', label: '테이블이나 벽에서 직원이 직접 주문을 넣어야 함' },
-                    { id: 'backup', label: '혹시 모를 포스 고장에 대비할 결제 백업 장치가 필요함' },
+                    { id: 'dual', label: '고객이 주문/금액을 볼 수 있는 화면이 필요해요' },
+                    { id: 'barcode', label: '바코드를 찍어서 상품을 팔아야 해요' },
+                    { id: 'printer', label: '주방이 멀어서 종이 주문서가 나와야 해요' },
+                    { id: 'kds', label: '주방에서 종이 대신 모니터로 주문을 보고 싶어요' },
+                    { id: 'delivery', label: '배달의민족, 요기요 등 배달 주문이 많아요' },
+                    { id: 'taxrefund', label: '외국인 관광객이 많이 와서 면세가 필요해요' },
+                    { id: 'orderpos', label: '직원들이 매장 곳곳에서 바로 주문을 넣어야 해요' },
+                    { id: 'backup', label: '혹시 인터넷이 끊겨도 결제는 꼭 돼야 해요' },
                   ].map((hw) => {
                     const isSelected = selections.hardware.includes(hw.id);
                     return (
@@ -384,7 +384,7 @@ export default function App() {
                   onClick={() => goToStep('step3')}
                   className="w-full h-24 bg-[#0F172A] hover:bg-black text-white text-2xl font-black rounded-[2rem] active:scale-[0.98] transition-transform shadow-xl flex items-center justify-between px-8"
                 >
-                  <span>다음 단계로</span>
+                  <span>선택 완료</span>
                   <ArrowRight className="w-7 h-7" />
                 </button>
               </motion.div>
@@ -394,14 +394,14 @@ export default function App() {
             {currentStep === 'step3' && (
               <motion.div key="step3" variants={fadeVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col pb-20">
                 {renderProgress(3, 3)}
-                <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-12 break-keep text-black">고객이 직접 주문/결제하는 시스템이 필요하신가요?</h2>
+                <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.05em] mb-12 break-keep text-black">손님이 직접 주문하고 결제하는 기능이 필요하신가요?</h2>
                 
                 <div className="flex flex-col gap-4">
                   {[
-                    { id: 'kiosk', label: '전문 키오스크 기기 도입', desc: '가장 직관적이고 보편적인 셀프 결제 환경' },
-                    { id: 'qr', label: '테이블에서 직접 주문/결제', desc: '고객 스마트폰을 활용한 최신 QR오더 시스템' },
-                    { id: 'budget', label: '셀프 결제는 필요하지만 기기 비용이 부담됨', desc: '단말기 키오스크 모드 등 가성비 솔루션 제안' },
-                    { id: 'none', label: '필요 없음', desc: '직원이 직접 결제를 모두 진행함' },
+                    { id: 'kiosk', label: '네, 전용 키오스크 기기를 놓고 싶어요', desc: '입구나 카운터 옆에 세워두는 일반적인 무인 결제기' },
+                    { id: 'qr', label: '네, 손님 스마트폰으로 주문하게 할래요 (QR오더)', desc: '테이블에 붙인 스티커를 찍어서 주문과 결제를 한 번에' },
+                    { id: 'budget', label: '필요한데, 기기 비용은 아끼고 싶어요', desc: '기본 제공 단말기를 활용하거나 가성비 좋은 방식으로 세팅' },
+                    { id: 'none', label: '아니요, 직원이 직접 주문을 받을게요', desc: '별도의 셀프 결제 시스템은 필요 없음' },
                   ].map((item) => (
                     <button
                       key={item.id}
