@@ -33,6 +33,8 @@ jobs:
         run: npm ci
       - name: Build with Next.js
         run: npx next build
+        env:
+          GITHUB_PAGES_DEPLOY: 'true'
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

@@ -1,11 +1,11 @@
 import type { NextConfig } from "next";
 
-const isGithubActions = process.env.GITHUB_ACTIONS || false;
+const isGithubPagesDeploy = process.env.GITHUB_PAGES_DEPLOY === 'true';
 
 let assetPrefix = '';
 let basePath = '';
 
-if (isGithubActions && process.env.GITHUB_REPOSITORY) {
+if (isGithubPagesDeploy && process.env.GITHUB_REPOSITORY) {
   const repo = process.env.GITHUB_REPOSITORY.replace(/.*?\//, '');
   assetPrefix = `/${repo}/`;
   basePath = `/${repo}`;
