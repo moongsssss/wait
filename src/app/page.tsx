@@ -160,11 +160,11 @@ export default function App() {
       if (kioskOpt === 'kiosk') {
         additionalItems.push('전문 키오스크 기기');
         summaryArr.push('키오스크');
-        reasonText += '고객이 직접 빠르고 편리하게 주문/결제할 수 있는 전문 키오스크 시스템을 함께 제안해 드립니다. ';
+        reasonText += '선불 전용 결제 환경에 맞춰, 고객이 직접 직관적으로 주문하고 결제할 수 있는 전문 키오스크 기기를 함께 제안해 드립니다. ';
       } else if (kioskOpt === 'qr') {
         additionalItems.push('QR오더 시스템');
         summaryArr.push('QR오더');
-        reasonText += '기기 도입 없이 고객의 스마트폰으로 테이블에서 직접 주문과 결제가 가능한 트렌디한 QR오더를 구축합니다. ';
+        reasonText += '매장의 결제 방식(선불, 후불, 키오스크 모드)과 상관없이 모두 대응 가능한 만능 솔루션입니다. 고가의 기기 없이 테이블 스티커만으로 주문/결제를 자동화합니다. ';
       } else if (kioskOpt === 'budget') {
         additionalItems.push('네이버 커넥트 단말기 또는 QR오더 키오스크 모드');
         summaryArr.push('비용 절감형 셀프결제');
@@ -450,8 +450,8 @@ export default function App() {
                 
                 <div className="flex flex-col gap-4">
                   {[
-                    { id: 'kiosk', label: '네, 전용 키오스크 기기를 놓고 싶어요', desc: '입구나 카운터 옆에 세워두는 일반적인 무인 결제기' },
-                    { id: 'qr', label: '네, 손님 스마트폰으로 주문하게 할래요 (QR오더)', desc: '테이블에 붙인 스티커를 찍어서 주문과 결제를 한 번에' },
+                    { id: 'kiosk', label: '네, 전용 키오스크 기기를 놓고 싶어요', desc: '입구나 카운터에 두는 선불 전용 무인 결제기' },
+                    { id: 'qr', label: '네, 손님 스마트폰으로 주문하게 할래요 (QR오더)', desc: '선불/후불 모두 가능! 테이블 스티커로 주문부터 결제까지' },
                     { id: 'budget', label: '필요한데, 기기 비용은 아끼고 싶어요', desc: '기본 제공 단말기를 활용하거나 가성비 좋은 방식으로 세팅' },
                     { id: 'none', label: '아니요, 직원이 직접 주문을 받을게요', desc: '별도의 셀프 결제 시스템은 필요 없음' },
                   ].map((item) => (
