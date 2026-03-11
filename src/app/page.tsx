@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, CheckCircle2, ChevronLeft, CheckSquare, Square, Download, AlertCircle, Info, Store, ShoppingBag, UtensilsCrossed, Coffee, Box, MapPin, MonitorSmartphone, Smartphone, Building2 } from 'lucide-react';
+import { ArrowRight, CheckCircle2, ChevronLeft, CheckSquare, Square, Download, AlertCircle, Info, Store, ShoppingBag, UtensilsCrossed, Coffee, Box, MapPin, MonitorSmartphone, Smartphone, Building2, Share2, HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import html2canvas from 'html2canvas';
@@ -43,6 +43,35 @@ const fadeVariants = {
   animate: { opacity: 1, y: 0, transition: { duration: 0.4 } },
   exit: { opacity: 0, y: -20, transition: { duration: 0.3 } }
 };
+
+function FAQAccordion({ title, children }: { title: string, children: React.ReactNode }) {
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+    <div className="border border-gray-200 rounded-2xl overflow-hidden mb-3 bg-white">
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full px-5 py-4 flex items-center justify-between text-left font-bold text-[#0F172A] hover:bg-gray-50 transition-colors"
+      >
+        <span>{title}</span>
+        {isOpen ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
+      </button>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div 
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="px-5 pb-4 pt-1 text-gray-600 text-sm sm:text-base leading-relaxed break-keep">
+              {children}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 export default function App() {
   const [currentStep, setCurrentStep] = useState<Step>('hero');
@@ -205,15 +234,43 @@ export default function App() {
     }
   };
 
-  // 1-3 Step Progress Indicator
-  const renderProgress = (stepNum: number, maxSteps: number = 3) => (
-    <div className="flex items-center gap-2 mb-8">
-       {Array.from({ length: maxSteps }).map((_, idx) => {
-         const s = idx + 1;
-         return (
-           <div key={s} className={`h-1.5 flex-1 rounded-full transition-colors duration-500 ${s <= stepNum ? 'bg-[#0055FF]' : 'bg-gray-100'}`} />
-         );
-       })}
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: '오케이포스 맞춤 구성',
+          text: '내가 방금 찾아본 매장 맞춤 구성이야! 곧 전화가 오니까 같이 확인해보자.',
+          url: window.location.href,
+        });
+      } catch (err) {
+        console.error('Share failed', err);
+      }
+    } else {
+      alert("현재 브라우저에서는 공유 기능을 지원하지 않습니다. 링크를 복사해서 전달해주세요!");
+    }
+  };
+
+  const getIconForDevice = (item: string) => {
+    if (item.includes('단말기') || item.includes('스마트폰') || item.includes('QR')) return <Smartphone className="w-5 h-5 text-[#0F172A]" />;
+    if (item.includes('포스') || item.includes('모니터') || item.includes('KDS') || item.includes('키오스크')) return <MonitorSmartphone className="w-5 h-5 text-[#0F172A]" />;
+    if (item.includes('스캐너') || item.includes('금전함') || item.includes('리더기') || item.includes('마우스') || item.includes('프린터')) return <Box className="w-5 h-5 text-[#0F172A]" />;
+    return <CheckCircle2 className="w-5 h-5 text-[#0055FF]" />;
+  };
+
+  // 1-4 Step Progress Indicator
+  const renderProgress = (stepNum: number, maxSteps: number = 4) => (
+    <div className="mb-8">
+      <div className="text-sm font-black text-[#0055FF] mb-3 tracking-tight">
+        1분이면 끝나요! ({stepNum} / {maxSteps} 단계)
+      </div>
+      <div className="flex items-center gap-2">
+         {Array.from({ length: maxSteps }).map((_, idx) => {
+           const s = idx + 1;
+           return (
+             <div key={s} className={`h-1.5 flex-1 rounded-full transition-colors duration-500 ${s <= stepNum ? 'bg-[#0055FF]' : 'bg-gray-100'}`} />
+           );
+         })}
+      </div>
     </div>
   );
 
@@ -228,7 +285,7 @@ export default function App() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#0055FF] opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-[#0055FF]"></span>
           </span>
-          <span className="text-sm font-bold tracking-tight">상담 대기 중</span>
+          <span className="text-sm font-bold tracking-tight">📞 1544-3640 전화 대기 중</span>
         </div>
       </header>
 
@@ -514,8 +571,10 @@ export default function App() {
                     <div className="flex flex-col gap-4">
                       {result.basic.map((item, idx) => (
                         <div key={idx} className="flex items-start gap-4">
-                          <span className="w-2.5 h-2.5 rounded-full bg-[#0F172A] flex-shrink-0 mt-2.5"></span>
-                          <span className="text-xl sm:text-2xl font-black text-[#0F172A] tracking-[-0.05em] leading-tight break-keep">{item}</span>
+                          <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                             {getIconForDevice(item)}
+                          </div>
+                          <span className="text-xl sm:text-2xl font-black text-[#0F172A] tracking-[-0.05em] leading-tight break-keep pt-0.5">{item}</span>
                         </div>
                       ))}
                     </div>
@@ -527,8 +586,10 @@ export default function App() {
                       <div className="flex flex-col gap-4">
                         {result.additional.map((item, idx) => (
                           <div key={idx} className="flex items-start gap-4">
-                            <span className="w-2.5 h-2.5 rounded-full bg-[#94A3B8] flex-shrink-0 mt-2.5"></span>
-                            <span className="text-xl sm:text-2xl font-black text-[#475569] tracking-[-0.05em] leading-tight break-keep">{item}</span>
+                            <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                               <CheckCircle2 className="w-5 h-5 text-[#0055FF]" />
+                            </div>
+                            <span className="text-xl sm:text-2xl font-black text-[#475569] tracking-[-0.05em] leading-tight break-keep pt-0.5">{item}</span>
                           </div>
                         ))}
                       </div>
@@ -578,6 +639,20 @@ export default function App() {
                     </a>
                   </div>
                 </div>
+                
+                {/* 미니 FAQ */}
+                <div className="mb-12">
+                  <div className="flex items-center gap-2 mb-6 px-2">
+                    <HelpCircle className="w-6 h-6 text-[#0055FF]" />
+                    <h4 className="text-xl font-black tracking-tight text-[#0F172A]">사장님들이 많이 묻는 질문</h4>
+                  </div>
+                  <FAQAccordion title="설치는 보통 얼마나 걸리나요?">
+                    기본 포스 세트 설치는 보통 <strong>1시간 전후</strong>로 소요됩니다. 다만, 추가 기기(대수)가 많아지거나 매장의 인터넷/배선 환경에 따라 시간이 추가될 수 있습니다.
+                  </FAQAccordion>
+                  <FAQAccordion title="중도 해지 시 위약금이 있나요?">
+                    <strong>구매 장비는 별도의 위약금이 없습니다.</strong> 다만, 임대/렌탈 계약으로 진행하실 경우 계약 기간 내 해지 시 위약금이 발생할 수 있습니다. 자세한 내용은 상담 시 꼭 같이 문의해주세요!
+                  </FAQAccordion>
+                </div>
 
                 <div className="flex flex-col gap-4">
                   <button
@@ -586,6 +661,13 @@ export default function App() {
                   >
                     <Download className="w-7 h-7" />
                     <span className="break-keep">내 맞춤 구성 저장 완료! (상담 시 이 화면을 켜두세요)</span>
+                  </button>
+                  <button
+                    onClick={handleShare}
+                    className="w-full h-16 bg-white border-2 border-[#E2E8F0] hover:border-[#0055FF] text-[#0F172A] text-lg font-bold rounded-2xl active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                  >
+                    <Share2 className="w-5 h-5" />
+                    동업자 / 가족에게 결과 공유하기
                   </button>
                   <button 
                     onClick={() => {
