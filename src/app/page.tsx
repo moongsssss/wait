@@ -624,11 +624,18 @@ export default function App() {
                   </div>
 
                   {result.summaryText && (
-                    <div className="mb-10 inline-flex items-start sm:items-center gap-2.5 bg-[#F8FAFC] px-5 py-3.5 rounded-2xl text-sm sm:text-base font-bold text-gray-600 border border-[#E2E8F0] break-keep">
+                    <div className="mb-6 inline-flex items-start sm:items-center gap-2.5 bg-[#F8FAFC] px-5 py-3.5 rounded-2xl text-sm sm:text-base font-bold text-gray-600 border border-[#E2E8F0] break-keep">
                       <Info className="w-5 h-5 flex-shrink-0 text-[#0055FF] mt-0.5 sm:mt-0" />
                       <span className="leading-snug">선택 조건: {result.summaryText}</span>
                     </div>
                   )}
+
+                  <div className="mb-10 p-5 bg-amber-50 border border-amber-100 rounded-2xl flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                    <p className="text-amber-900 text-sm sm:text-base font-bold leading-relaxed break-keep">
+                      해당은 간단 진단 리포트 이며 매장의 운영 방식과 구조등을 전문 상담사가 정밀 진단 후 제안드리는 제품의 구성이 변경될 수 있습니다.
+                    </p>
+                  </div>
 
                   <div className="mb-10">
                     <span className="text-[#0055FF] font-black text-sm mb-4 block border-b border-gray-100 pb-3 tracking-widest">기본 구성</span>
