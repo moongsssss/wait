@@ -413,8 +413,21 @@ export default function App() {
                 </p>
 
                 {/* Photo Guide Button */}
-                <button
+                <motion.button
                   onClick={() => setIsPhotoGuideOpen(true)}
+                  animate={{ 
+                    scale: [1, 1.02, 1],
+                    boxShadow: [
+                      "0px 4px 6px -1px rgba(0, 0, 0, 0.05), 0px 2px 4px -1px rgba(0, 0, 0, 0.03)",
+                      "0px 10px 20px -5px rgba(0, 85, 255, 0.15), 0px 8px 16px -8px rgba(0, 85, 255, 0.1)",
+                      "0px 4px 6px -1px rgba(0, 0, 0, 0.05), 0px 2px 4px -1px rgba(0, 0, 0, 0.03)"
+                    ]
+                  }}
+                  transition={{ 
+                    duration: 2, 
+                    repeat: Infinity, 
+                    ease: "easeInOut" 
+                  }}
                   className="w-full bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 hover:border-[#0055FF] rounded-2xl p-5 mb-8 flex items-center justify-between group transition-all"
                 >
                   <div className="flex items-center gap-4">
@@ -427,7 +440,7 @@ export default function App() {
                     </div>
                   </div>
                   <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-[#0055FF] transition-colors" />
-                </button>
+                </motion.button>
                 
                 <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-5 mb-12 flex items-start gap-4">
                   <AlertCircle className="w-6 h-6 text-[#0055FF] shrink-0 mt-0.5" />
