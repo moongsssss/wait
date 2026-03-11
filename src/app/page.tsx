@@ -328,7 +328,13 @@ export default function App() {
                   
                   <div className="flex flex-col lg:flex-row gap-8 lg:gap-4 relative">
                     {PROCESS.map((step, i) => (
-                      <div key={i} className="flex flex-row lg:flex-col items-start lg:items-center gap-4 flex-1 relative z-10 group">
+                      <motion.div 
+                        key={i} 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.1 }}
+                        className="flex flex-row lg:flex-col items-start lg:items-center gap-4 flex-1 relative z-10 group"
+                      >
                         {/* Mobile Connector */}
                         {i < PROCESS.length - 1 && (
                           <div className="lg:hidden absolute top-[3rem] left-6 w-[2px] h-[calc(100%-1rem)] bg-blue-100 -z-10"></div>
@@ -338,9 +344,21 @@ export default function App() {
                           <div className="hidden lg:block absolute top-6 left-[60%] w-full h-[2px] bg-blue-100 -z-10"></div>
                         )}
                         
-                        <div className="w-12 h-12 rounded-full bg-white border-[3px] border-[#0055FF] text-[#0055FF] flex items-center justify-center text-base font-black shrink-0 shadow-sm z-10">
+                        <motion.div 
+                          animate={{ 
+                            scale: [1, 1.1, 1],
+                            backgroundColor: ["#FFFFFF", "#EFF6FF", "#FFFFFF"]
+                          }}
+                          transition={{ 
+                            duration: 2, 
+                            repeat: Infinity, 
+                            delay: i * 0.4,
+                            ease: "easeInOut"
+                          }}
+                          className="w-12 h-12 rounded-full bg-white border-[3px] border-[#0055FF] text-[#0055FF] flex items-center justify-center text-base font-black shrink-0 shadow-sm z-10"
+                        >
                           {i + 1}
-                        </div>
+                        </motion.div>
                         
                         <div className="flex flex-col lg:items-center pt-1 lg:pt-2 w-full">
                           <h4 className="text-lg font-black text-[#0F172A] mb-1.5 whitespace-nowrap">{step.title}</h4>
@@ -348,7 +366,7 @@ export default function App() {
                             {step.desc}
                           </p>
                         </div>
-                      </div>
+                      </motion.div>
                     ))}
                   </div>
                   
