@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, CheckCircle2, ChevronLeft, CheckSquare, Square, Download, AlertCircle, Info, Store, ShoppingBag, UtensilsCrossed, Coffee, Box, MapPin, MonitorSmartphone, Smartphone, Building2, Share2, HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowRight, CheckCircle2, ChevronLeft, CheckSquare, Square, Download, AlertCircle, Info, Store, ShoppingBag, UtensilsCrossed, Coffee, Box, MapPin, MonitorSmartphone, Smartphone, Building2, Share2, HelpCircle, ChevronDown, ChevronUp, X, Camera } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import html2canvas from 'html2canvas';
@@ -78,6 +78,7 @@ export default function App() {
   const [currentStep, setCurrentStep] = useState<Step>('hero');
   const [history, setHistory] = useState<Step[]>([]);
   const [selections, setSelections] = useState<Selections>({ type: '', typeLabel: '', hardware: [] });
+  const [isPhotoGuideOpen, setIsPhotoGuideOpen] = useState(false);
   
   // 결과 분리 (기본 vs 추가)
   const [result, setResult] = useState({ 
@@ -410,6 +411,23 @@ export default function App() {
                   선택지에 답하는 것만으로<br />
                   가장 합리적인 구성을 1분 만에 도출합니다.
                 </p>
+
+                {/* Photo Guide Button */}
+                <button
+                  onClick={() => setIsPhotoGuideOpen(true)}
+                  className="w-full bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 hover:border-[#0055FF] rounded-2xl p-5 mb-8 flex items-center justify-between group transition-all"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm">
+                      <Camera className="w-6 h-6 text-[#0055FF]" />
+                    </div>
+                    <div className="flex flex-col text-left">
+                      <span className="text-[#0F172A] font-black text-lg tracking-tight mb-0.5">자주 묻는 질문 1위 🏆</span>
+                      <span className="text-blue-600 font-bold text-sm">카드 가맹용 필수 '매장 사진' 촬영 가이드</span>
+                    </div>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-[#0055FF] transition-colors" />
+                </button>
                 
                 <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-5 mb-12 flex items-start gap-4">
                   <AlertCircle className="w-6 h-6 text-[#0055FF] shrink-0 mt-0.5" />
@@ -797,6 +815,106 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* Photo Guide Modal */}
+      <AnimatePresence>
+        {isPhotoGuideOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm"
+          >
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              className="bg-white w-full max-w-2xl max-h-[90vh] rounded-[2rem] overflow-hidden shadow-2xl flex flex-col relative"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-white sticky top-0 z-10">
+                <div>
+                  <h3 className="text-xl sm:text-2xl font-black text-[#0F172A] tracking-tight">매장 내/외부 사진 촬영 가이드</h3>
+                  <p className="text-sm text-gray-500 font-bold mt-1">카드 가맹점 등록을 위한 필수 서류입니다.</p>
+                </div>
+                <button 
+                  onClick={() => setIsPhotoGuideOpen(false)}
+                  className="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors"
+                >
+                  <X className="w-6 h-6 text-gray-600" />
+                </button>
+              </div>
+
+              {/* Scrollable Content */}
+              <div className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-10">
+                
+                <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-bold border border-red-100 leading-relaxed break-keep">
+                  <AlertCircle className="w-5 h-5 inline-block mr-2 -mt-0.5" />
+                  <strong>주의사항:</strong> 모든 사진은 <span className="underline decoration-2 underline-offset-4">사업자 등록증상의 주소지와 일치</span>하는 곳에서 촬영되어야 합니다. 자택(집)이 사업장 주소지인 경우에도 동일한 기준이 적용됩니다. 어떠한 업종에도 예외 없이 적용되는 카드사 필수 조건입니다.
+                </div>
+
+                {/* 외부 사진 가이드 */}
+                <section>
+                  <h4 className="text-lg font-black text-[#0055FF] mb-4 flex items-center gap-2">
+                    <span className="w-6 h-6 rounded-full bg-[#0055FF] text-white flex items-center justify-center text-sm">1</span>
+                    매장 외부 사진
+                  </h4>
+                  <div className="space-y-6">
+                    <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-gray-100">
+                      <div className="font-bold text-[#0F172A] mb-3">✅ 기본 조건: 매장 간판이나 전경이 전체적으로 보이게 촬영</div>
+                      <img src="/guide/outside1.png" alt="외부 전경 예시" className="w-full rounded-xl object-cover border border-gray-200" />
+                    </div>
+                    <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-gray-100">
+                      <div className="font-bold text-[#0F172A] mb-3">✅ 출입문 개방: 출입문을 열어 매장 안쪽이 보이게 촬영</div>
+                      <img src="/guide/outside2.png" alt="출입문 개방 예시" className="w-full rounded-xl object-cover border border-gray-200" />
+                    </div>
+                    <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-gray-100">
+                      <div className="font-bold text-[#0F172A] mb-2">💡 간판이 아직 없다면? (외부 1-1)</div>
+                      <p className="text-sm text-gray-500 mb-3 break-keep">건물 벽면에 부착된 도로명 주소 표지판(사업자 주소지와 일치)이 포함되도록 촬영해 주세요.</p>
+                      <img src="/guide/outside1-1.png" alt="도로명 주소 표지판 예시" className="w-full rounded-xl object-cover border border-gray-200" />
+                    </div>
+                  </div>
+                </section>
+
+                {/* 내부 사진 가이드 */}
+                <section>
+                  <h4 className="text-lg font-black text-[#0055FF] mb-4 flex items-center gap-2">
+                    <span className="w-6 h-6 rounded-full bg-[#0055FF] text-white flex items-center justify-center text-sm">2</span>
+                    매장 내부 사진
+                  </h4>
+                  <div className="space-y-6">
+                    <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-gray-100">
+                      <div className="font-bold text-[#0F172A] mb-3">✅ 내부 전경 1: 매장 내부가 잘 보이도록 넓게 촬영</div>
+                      <img src="/guide/inside1.png" alt="내부 전경 예시 1" className="w-full rounded-xl object-cover border border-gray-200" />
+                    </div>
+                    <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-gray-100">
+                      <div className="font-bold text-[#0F172A] mb-3">✅ 내부 전경 2: 다른 각도에서 매장이 넓게 보이게 촬영</div>
+                      <img src="/guide/inside2.png" alt="내부 전경 예시 2" className="w-full rounded-xl object-cover border border-gray-200" />
+                    </div>
+                    <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-gray-100">
+                      <div className="font-bold text-[#0F172A] mb-2">✅ 업종 증빙: 판매 물품/서비스가 보이게 촬영</div>
+                      <p className="text-sm text-gray-500 mb-3 break-keep">(예: 네일샵 시술대, 헬스장 기구, 도소매 판매 물품 등)</p>
+                      <img src="/guide/inside3.png" alt="업종 증빙 사진 예시" className="w-full rounded-xl object-cover border border-gray-200" />
+                    </div>
+                  </div>
+                </section>
+
+              </div>
+              
+              {/* Footer */}
+              <div className="p-6 border-t border-gray-100 bg-white">
+                <button 
+                  onClick={() => setIsPhotoGuideOpen(false)}
+                  className="w-full h-16 bg-[#0F172A] hover:bg-black text-white font-bold text-xl rounded-2xl transition-colors"
+                >
+                  확인했습니다
+                </button>
+              </div>
+
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     </div>
   );
