@@ -305,12 +305,27 @@ export default function App() {
                 </p>
                 <button
                   onClick={() => goToStep('step1')}
-                  className="w-full h-24 bg-[#0F172A] hover:bg-black text-white text-2xl sm:text-3xl font-black rounded-[2rem] active:scale-[0.98] transition-all flex items-center justify-between px-8 shadow-2xl shadow-black/10 group"
+                  className="w-full h-24 bg-[#0F172A] hover:bg-black text-white text-2xl sm:text-3xl font-black rounded-[2rem] active:scale-[0.98] transition-all flex items-center justify-between px-8 shadow-2xl shadow-black/10 group mb-4"
                 >
                   <span>구성 찾기 시작</span>
                   <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center group-hover:bg-white/20 transition-colors">
                     <ArrowRight className="w-6 h-6" strokeWidth={3} />
                   </div>
+                </button>
+                <button
+                  onClick={() => {
+                    setResult({
+                      title: '전문 컨설턴트가 최적의 구성을 제안해 드립니다.',
+                      basic: ['정밀 진단 후 맞춤 구성 안내'],
+                      additional: [],
+                      reason: '매장 환경이 복잡하거나 어떤 기기가 필요한지 잘 모르시더라도 걱정하지 마세요. 전문 상담원이 매장의 규모, 동선, 결제 방식을 꼼꼼히 파악하여 가장 합리적이고 완벽한 포스 시스템을 맞춤형으로 컨설팅해 드립니다.',
+                      summaryText: '전문가 상담 요청'
+                    });
+                    goToStep('result');
+                  }}
+                  className="w-full h-16 bg-white border-2 border-[#E2E8F0] hover:border-[#0055FF] text-[#64748B] hover:text-[#0F172A] text-lg sm:text-xl font-bold rounded-2xl active:scale-[0.98] transition-all flex items-center justify-center"
+                >
+                  잘 모르겠어요, 상담 후 결정할래요
                 </button>
               </motion.div>
             )}
