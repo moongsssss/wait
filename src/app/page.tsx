@@ -428,9 +428,23 @@ export default function App() {
                     repeat: Infinity, 
                     ease: "easeInOut" 
                   }}
-                  className="w-full bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 hover:border-[#0055FF] rounded-2xl p-5 mb-8 flex items-center justify-between group transition-all"
+                  className="w-full bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 hover:border-[#0055FF] rounded-2xl p-5 mb-8 flex items-center justify-between group transition-all relative overflow-hidden"
                 >
-                  <div className="flex items-center gap-4">
+                  {/* Shimmer Effect */}
+                  <motion.div
+                    animate={{
+                      x: ['-100%', '200%'],
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      repeatDelay: 0.5
+                    }}
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -skew-x-12 z-0"
+                  />
+
+                  <div className="flex items-center gap-4 relative z-10">
                     <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm">
                       <Camera className="w-6 h-6 text-[#0055FF]" />
                     </div>
@@ -439,7 +453,7 @@ export default function App() {
                       <span className="text-blue-600 font-bold text-sm">카드 가맹용 필수 '매장 사진' 촬영 가이드</span>
                     </div>
                   </div>
-                  <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-[#0055FF] transition-colors" />
+                  <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-[#0055FF] transition-colors relative z-10" />
                 </motion.button>
                 
                 <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-5 mb-12 flex items-start gap-4">
