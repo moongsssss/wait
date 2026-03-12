@@ -2,11 +2,11 @@
 
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, CheckCircle2, ChevronLeft, CheckSquare, Square, Download, AlertCircle, Info, Store, ShoppingBag, UtensilsCrossed, Coffee, Box, MapPin, MonitorSmartphone, Smartphone, Building2, Share2, HelpCircle, ChevronDown, ChevronUp, X, Camera } from 'lucide-react';
+import { ArrowRight, CheckCircle2, ChevronLeft, CheckSquare, Square, Download, AlertCircle, Info, Store, ShoppingBag, UtensilsCrossed, Coffee, Box, MapPin, MonitorSmartphone, Smartphone, Building2, Share2, HelpCircle, ChevronDown, ChevronUp, X, Camera, ImageIcon } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+import { jsPDF } from 'jspdf';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -216,81 +216,88 @@ export default function App() {
     goToStep('result');
   };
 
-  const handleCapture = async () => {
-    if (!captureRef.current) return;
+  // 공통 캡처 함수
+  const getCaptureCanvas = async () => {
+    if (!captureRef.current) return null;
+    
+    const element = captureRef.current;
+    
+    // 1. 모든 이미지 로딩 완료 대기
+    const imgs = Array.from(element.querySelectorAll('img'));
+    await Promise.all(imgs.map(img => {
+      if (img.complete) return Promise.resolve();
+      return new Promise(resolve => { img.onload = resolve; img.onerror = resolve; });
+    }));
+
+    // 2. 캡처를 위해 일시적으로 스타일 고정
+    const originalStyle = element.getAttribute('style');
+    element.style.transform = 'none';
+    element.style.transition = 'none';
+    
+    // 3. 캡처 시 좌표 보정 (스크롤 상단 이동)
+    const originalScrollY = window.scrollY;
+    window.scrollTo(0, 0);
 
     try {
-      // 1. 모든 이미지 로딩 대기
-      const images = captureRef.current.querySelectorAll('img');
-      const imagePromises = Array.from(images).map(img => {
-        if (img.complete) return Promise.resolve();
-        return new Promise(resolve => {
-          img.onload = resolve;
-          img.onerror = resolve;
-        });
-      });
-      await Promise.all(imagePromises);
-
-      // 2. 폰트 로딩 대기
-      if (typeof document !== 'undefined' && (document as any).fonts) {
-        await (document as any).fonts.ready;
-      }
-
-      // 3. 캡처를 위한 일시적 스타일 조정
-      const element = captureRef.current;
-      const originalStyle = {
-        boxShadow: element.style.boxShadow,
-        borderRadius: element.style.borderRadius,
-        transform: element.style.transform
-      };
-      
-      element.style.boxShadow = "none";
-      element.style.borderRadius = "0";
-      element.style.transform = "none";
-
-      // 4. html2canvas 실행
       const canvas = await html2canvas(element, {
-        scale: 2,
+        scale: 1.5, // 모바일 메모리 고려하여 1.5로 설정
         useCORS: true,
-        allowTaint: true,
         backgroundColor: '#FFFFFF',
         logging: false,
-        scrollY: -window.scrollY, // 스크롤 위치 보정
-        windowWidth: document.documentElement.offsetWidth,
-        windowHeight: document.documentElement.offsetHeight,
+        ignoreElements: (el) => el.classList.contains('blur-3xl') || el.classList.contains('animate-ping')
       });
-
-      // 스타일 복구
-      element.style.boxShadow = originalStyle.boxShadow;
-      element.style.borderRadius = originalStyle.borderRadius;
-      element.style.transform = originalStyle.transform;
-
-      // 5. PDF 생성
-      const imgData = canvas.toDataURL('image/jpeg', 0.9); // PNG보다 가볍고 호환성 좋은 JPEG 사용
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4'
-      });
-
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-      const imgWidth = canvas.width;
-      const imgHeight = canvas.height;
-      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
       
-      const finalWidth = imgWidth * ratio;
-      const finalHeight = imgHeight * ratio;
-      const marginX = (pdfWidth - finalWidth) / 2;
-      const marginY = 10; // 상단 여백
+      // 4. 원래 상태로 복구
+      if (originalStyle) element.setAttribute('style', originalStyle);
+      window.scrollTo(0, originalScrollY);
+      
+      return canvas;
+    } catch (e) {
+      window.scrollTo(0, originalScrollY);
+      throw e;
+    }
+  };
 
-      pdf.addImage(imgData, 'JPEG', marginX, marginY, finalWidth, finalHeight);
+  const handleSaveAsPDF = async () => {
+    try {
+      const canvas = await getCaptureCanvas();
+      if (!canvas) return;
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const canvasWidth = canvas.width;
+      const canvasHeight = canvas.height;
+      
+      const width = pageWidth - 20; // 10mm 여백
+      const height = (canvasHeight * width) / canvasWidth;
+      
+      pdf.addImage(imgData, 'PNG', 10, 10, width, height);
       pdf.save("okpos_recommendation.pdf");
       
       alert("PDF 저장이 완료되었습니다.");
     } catch (error) {
-      console.error("PDF generation failed:", error);
-      alert("PDF 저장 중 오류가 발생했습니다. 직접 캡처(스크린샷)를 이용해 주세요.");
+      console.error(error);
+      alert("PDF 저장 중 오류가 발생했습니다. 아래의 '이미지로 저장' 기능을 이용해 주세요.");
+    }
+  };
+
+  const handleSaveAsImage = async () => {
+    try {
+      const canvas = await getCaptureCanvas();
+      if (!canvas) return;
+
+      const imgData = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = imgData;
+      link.download = 'okpos_recommendation.png';
+      link.click();
+      
+      alert("이미지 저장이 완료되었습니다.");
+    } catch (error) {
+      console.error(error);
+      alert("저장에 실패했습니다. 화면을 직접 캡처(스크린샷)하여 보관해 주세요.");
     }
   };
 
@@ -873,11 +880,18 @@ export default function App() {
 
                 <div className="flex flex-col gap-4">
                   <button
-                    onClick={handleCapture}
+                    onClick={handleSaveAsPDF}
                     className="w-full h-24 bg-[#0055FF] hover:bg-blue-700 text-white text-xl sm:text-2xl font-black rounded-[2rem] active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-[0_8px_30px_rgb(0,85,255,0.25)] px-6"
                   >
                     <Download className="w-7 h-7" />
-                    <span className="break-keep">내 맞춤 구성 저장 완료! (상담 시 이 화면을 켜두세요)</span>
+                    <span className="break-keep">내 맞춤 구성 PDF 저장 (문서용)</span>
+                  </button>
+                  <button
+                    onClick={handleSaveAsImage}
+                    className="w-full h-20 bg-emerald-600 hover:bg-emerald-700 text-white text-lg sm:text-xl font-black rounded-[2rem] active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-lg px-6"
+                  >
+                    <ImageIcon className="w-6 h-6" />
+                    <span className="break-keep">내 맞춤 구성 이미지 저장 (갤러리 보관용)</span>
                   </button>
                   <button
                     onClick={handleShare}
