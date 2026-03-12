@@ -912,6 +912,17 @@ export default function App() {
               {/* Scrollable Content */}
               <div className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-10">
                 
+                {/* 인테리어 진행 중 관련 중요 공지 */}
+                <div className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-5 flex items-start gap-4">
+                  <Camera className="w-6 h-6 text-amber-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-amber-900 font-black text-lg tracking-tight mb-1">가맹 접수 불가 안내</p>
+                    <p className="text-amber-800 font-bold text-sm sm:text-base leading-relaxed break-keep">
+                      인테리어 진행 중으로 <span className="text-red-600 underline underline-offset-4 decoration-2">업종 확인이 불가능한</span> 매장 내/외부 사진으로는 카드사 가맹 접수가 어렵습니다.
+                    </p>
+                  </div>
+                </div>
+
                 <div className="bg-red-50 text-red-600 p-5 rounded-2xl text-sm sm:text-base font-bold border-2 border-red-200 leading-relaxed break-keep relative overflow-hidden">
                   <motion.div
                     animate={{
