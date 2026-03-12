@@ -217,44 +217,80 @@ export default function App() {
   };
 
   const handleCapture = async () => {
-    if (captureRef.current) {
-      try {
-        // 캡처 중임을 알리는 피드백 (선택사항)
-        const originalStyle = captureRef.current.style.boxShadow;
-        captureRef.current.style.boxShadow = "none"; // 캡처 시 복잡한 그림자 제거
+    if (!captureRef.current) return;
 
-        const canvas = await html2canvas(captureRef.current, { 
-          scale: 2, // 3에서 2로 조정하여 메모리 부담 완화 및 속도 향상
-          useCORS: true,
-          backgroundColor: '#FFFFFF',
-          logging: false,
-          ignoreElements: (element) => {
-            // 캡처에 불필요하거나 오류를 일으킬 수 있는 블러 요소 제외
-            return element.classList.contains('blur-3xl');
-          }
+    try {
+      // 1. 모든 이미지 로딩 대기
+      const images = captureRef.current.querySelectorAll('img');
+      const imagePromises = Array.from(images).map(img => {
+        if (img.complete) return Promise.resolve();
+        return new Promise(resolve => {
+          img.onload = resolve;
+          img.onerror = resolve;
         });
-        
-        captureRef.current.style.boxShadow = originalStyle;
+      });
+      await Promise.all(imagePromises);
 
-        const imgData = canvas.toDataURL('image/png', 1.0);
-        const pdf = new jsPDF({
-          orientation: 'portrait',
-          unit: 'mm',
-          format: 'a4'
-        });
-
-        const imgWidth = 210; 
-        const pageHeight = 297;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        
-        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight, undefined, 'FAST');
-        pdf.save("okpos_recommendation.pdf");
-        
-        alert("맞춤 구성 리포트가 PDF로 저장되었습니다. 상담 시 파일을 보여주시면 더욱 빠른 안내가 가능합니다.");
-      } catch (e) {
-        console.error("PDF generation failed:", e);
-        alert("파일 저장 중 오류가 발생했습니다. 브라우저의 직접 캡처 기능을 이용해 주세요.");
+      // 2. 폰트 로딩 대기
+      if (typeof document !== 'undefined' && (document as any).fonts) {
+        await (document as any).fonts.ready;
       }
+
+      // 3. 캡처를 위한 일시적 스타일 조정
+      const element = captureRef.current;
+      const originalStyle = {
+        boxShadow: element.style.boxShadow,
+        borderRadius: element.style.borderRadius,
+        transform: element.style.transform
+      };
+      
+      element.style.boxShadow = "none";
+      element.style.borderRadius = "0";
+      element.style.transform = "none";
+
+      // 4. html2canvas 실행
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#FFFFFF',
+        logging: false,
+        scrollY: -window.scrollY, // 스크롤 위치 보정
+        windowWidth: document.documentElement.offsetWidth,
+        windowHeight: document.documentElement.offsetHeight,
+      });
+
+      // 스타일 복구
+      element.style.boxShadow = originalStyle.boxShadow;
+      element.style.borderRadius = originalStyle.borderRadius;
+      element.style.transform = originalStyle.transform;
+
+      // 5. PDF 생성
+      const imgData = canvas.toDataURL('image/jpeg', 0.9); // PNG보다 가볍고 호환성 좋은 JPEG 사용
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+      
+      const finalWidth = imgWidth * ratio;
+      const finalHeight = imgHeight * ratio;
+      const marginX = (pdfWidth - finalWidth) / 2;
+      const marginY = 10; // 상단 여백
+
+      pdf.addImage(imgData, 'JPEG', marginX, marginY, finalWidth, finalHeight);
+      pdf.save("okpos_recommendation.pdf");
+      
+      alert("PDF 저장이 완료되었습니다.");
+    } catch (error) {
+      console.error("PDF generation failed:", error);
+      alert("PDF 저장 중 오류가 발생했습니다. 직접 캡처(스크린샷)를 이용해 주세요.");
     }
   };
 
