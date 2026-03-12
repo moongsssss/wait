@@ -951,7 +951,7 @@ export default function App() {
                         간판 및 전경
                       </div>
                       <p className="text-sm text-gray-600 font-bold mb-3 break-keep">매장의 간판과 외부 전체가 한눈에 들어오게 찍어주세요.</p>
-                      <img src="/guide/outside1.png" alt="외부 전경 예시" className="w-full rounded-xl object-cover border border-gray-200 shadow-sm" />
+                      <img src="./guide/outside1.png" alt="외부 전경 예시" className="w-full rounded-xl object-cover border border-gray-200 shadow-sm" />
                     </div>
                     
                     <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-gray-100 relative overflow-hidden">
@@ -963,7 +963,7 @@ export default function App() {
                         도로명 주소 표지판
                       </div>
                       <p className="text-sm text-gray-600 font-bold mb-3 break-keep">간판이 없다면, 사업자등록증상 주소지와 똑같은 건물 외벽의 도로명 주소판을 찍어주세요.</p>
-                      <img src="/guide/outside1-1.png" alt="도로명 주소 표지판 예시" className="w-full rounded-xl object-cover border border-gray-200 shadow-sm" />
+                      <img src="./guide/outside1-1.png" alt="도로명 주소 표지판 예시" className="w-full rounded-xl object-cover border border-gray-200 shadow-sm" />
                     </div>
 
                     <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-gray-100">
@@ -972,7 +972,7 @@ export default function App() {
                         출입문 개방
                       </div>
                       <p className="text-sm text-gray-600 font-bold mb-3 break-keep">출입문을 활짝 열고 매장 안쪽이 보이도록 찍어주세요.</p>
-                      <img src="/guide/outside2.png" alt="출입문 개방 예시" className="w-full rounded-xl object-cover border border-gray-200 shadow-sm" />
+                      <img src="./guide/outside2.png" alt="출입문 개방 예시" className="w-full rounded-xl object-cover border border-gray-200 shadow-sm" />
                     </div>
                   </div>
                 </section>
@@ -990,7 +990,7 @@ export default function App() {
                         매장 전체 전경
                       </div>
                       <p className="text-sm text-gray-600 font-bold mb-3 break-keep">구석에서 매장 내부가 최대한 넓게 다 보이도록 찍어주세요.</p>
-                      <img src="/guide/inside1.png" alt="내부 전경 예시 1" className="w-full rounded-xl object-cover border border-gray-200 shadow-sm" />
+                      <img src="./guide/inside1.png" alt="내부 전경 예시 1" className="w-full rounded-xl object-cover border border-gray-200 shadow-sm" />
                     </div>
 
                     <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-gray-100">
@@ -999,7 +999,7 @@ export default function App() {
                         다른 각도 전경
                       </div>
                       <p className="text-sm text-gray-600 font-bold mb-3 break-keep">반대편 구석이나 다른 각도에서 매장이 넓게 보이게 한 장 더 찍어주세요.</p>
-                      <img src="/guide/inside2.png" alt="내부 전경 예시 2" className="w-full rounded-xl object-cover border border-gray-200 shadow-sm" />
+                      <img src="./guide/inside2.png" alt="내부 전경 예시 2" className="w-full rounded-xl object-cover border border-gray-200 shadow-sm" />
                     </div>
 
                     <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-gray-100">
@@ -1008,7 +1008,7 @@ export default function App() {
                         판매 물품 및 업종 증빙
                       </div>
                       <p className="text-sm text-gray-600 font-bold mb-3 break-keep">네일샵 시술대, 헬스장 기구, 진열된 상품 등 어떤 업종인지 확실히 알 수 있는 곳을 찍어주세요.</p>
-                      <img src="/guide/inside3.png" alt="업종 증빙 사진 예시" className="w-full rounded-xl object-cover border border-gray-200 shadow-sm" />
+                      <img src="./guide/inside3.png" alt="업종 증빙 사진 예시" className="w-full rounded-xl object-cover border border-gray-200 shadow-sm" />
                     </div>
                   </div>
                 </section>
