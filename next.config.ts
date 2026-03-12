@@ -2,8 +2,8 @@ import type { NextConfig } from "next";
 
 const isGithubPagesDeploy = process.env.GITHUB_PAGES_DEPLOY === 'true';
 
-let assetPrefix = '';
-let basePath = '';
+let assetPrefix = undefined;
+let basePath = undefined;
 
 if (isGithubPagesDeploy && process.env.GITHUB_REPOSITORY) {
   const repo = process.env.GITHUB_REPOSITORY.replace(/.*?\//, '');
@@ -13,8 +13,8 @@ if (isGithubPagesDeploy && process.env.GITHUB_REPOSITORY) {
 
 const nextConfig: NextConfig = {
   output: 'export',
-  basePath: basePath || undefined,
-  assetPrefix: assetPrefix || undefined,
+  basePath: basePath,
+  assetPrefix: assetPrefix,
   images: {
     unoptimized: true,
   },

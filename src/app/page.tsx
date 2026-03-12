@@ -291,14 +291,16 @@ export default function App() {
     <div className="min-h-[100dvh] bg-[#FFFFFF] text-[#0F172A] font-sans selection:bg-[#0055FF] selection:text-white flex flex-col">
       
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100 px-6 py-4 flex justify-between items-center shadow-sm">
-        <div className="font-black text-2xl tracking-tighter text-black">OKPOS</div>
-        <div className="flex items-center gap-2 px-4 py-2 bg-blue-50/50 text-[#0055FF] rounded-full border border-blue-100">
-          <span className="relative flex h-2 w-2">
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100 px-4 sm:px-6 py-4 flex justify-between items-center shadow-sm">
+        <div className="font-black text-xl sm:text-2xl tracking-tighter text-black shrink-0">OKPOS</div>
+        <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-blue-50/50 text-[#0055FF] rounded-full border border-blue-100 ml-2 overflow-hidden">
+          <span className="relative flex h-2 w-2 shrink-0">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#0055FF] opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-[#0055FF]"></span>
           </span>
-          <span className="text-sm font-bold tracking-tight">📞 1544-3640 혹은 070 전화 발송 대기 중</span>
+          <span className="text-[10px] sm:text-sm font-bold tracking-tight whitespace-nowrap">
+            📞 <span className="hidden xs:inline">1544-3640 혹은 070</span> 전화 대기 중
+          </span>
         </div>
       </header>
 
@@ -412,48 +414,81 @@ export default function App() {
                   가장 합리적인 구성을 1분 만에 도출합니다.
                 </p>
 
-                {/* Photo Guide Button */}
+                {/* Mystery FAQ Card (Orange Theme) */}
                 <motion.button
                   onClick={() => setIsPhotoGuideOpen(true)}
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.98 }}
+                  initial={{ opacity: 0, y: 20 }}
                   animate={{ 
-                    scale: [1, 1.02, 1],
+                    opacity: 1, 
+                    y: 0,
                     boxShadow: [
-                      "0px 4px 6px -1px rgba(0, 0, 0, 0.05), 0px 2px 4px -1px rgba(0, 0, 0, 0.03)",
-                      "0px 10px 20px -5px rgba(0, 85, 255, 0.15), 0px 8px 16px -8px rgba(0, 85, 255, 0.1)",
-                      "0px 4px 6px -1px rgba(0, 0, 0, 0.05), 0px 2px 4px -1px rgba(0, 0, 0, 0.03)"
+                      "0px 4px 12px rgba(245, 158, 11, 0.1)",
+                      "0px 12px 24px rgba(245, 158, 11, 0.2)",
+                      "0px 4px 12px rgba(245, 158, 11, 0.1)"
                     ]
                   }}
                   transition={{ 
-                    duration: 2, 
-                    repeat: Infinity, 
-                    ease: "easeInOut" 
+                    animate: { duration: 3, repeat: Infinity, ease: "easeInOut" }
                   }}
-                  className="w-full bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 hover:border-[#0055FF] rounded-2xl p-5 mb-8 flex items-center justify-between group transition-all relative overflow-hidden"
+                  className="w-full bg-gradient-to-br from-orange-500 via-amber-500 to-orange-600 border-none rounded-2xl p-5 sm:p-6 mb-10 flex items-center justify-between group transition-all relative overflow-hidden text-white"
                 >
-                  {/* Shimmer Effect */}
+                  {/* Subtle Background Glow */}
                   <motion.div
                     animate={{
-                      x: ['-100%', '200%'],
+                      opacity: [0.2, 0.4, 0.2],
+                    }}
+                    transition={{ duration: 4, repeat: Infinity }}
+                    className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-2xl z-0"
+                  />
+
+                  {/* Horizontal Shimmer Effect */}
+                  <motion.div
+                    animate={{
+                      left: ['-100%', '200%'],
                     }}
                     transition={{
                       duration: 3,
                       repeat: Infinity,
                       ease: "easeInOut",
-                      repeatDelay: 0.5
+                      repeatDelay: 1
                     }}
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -skew-x-12 z-0"
+                    className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 z-0"
                   />
 
-                  <div className="flex items-center gap-4 relative z-10">
-                    <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm">
-                      <Camera className="w-6 h-6 text-[#0055FF]" />
+                  <div className="flex items-center gap-4 sm:gap-6 relative z-10 w-full">
+                    <div className="shrink-0 pl-1">
+                      <motion.div 
+                        animate={{ 
+                          scale: [1, 1.05, 1],
+                        }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className="w-12 h-12 sm:w-14 sm:h-14 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/30 shadow-lg group-hover:bg-white transition-all duration-300"
+                      >
+                        <HelpCircle className="w-7 h-7 sm:w-8 sm:h-8 text-white group-hover:text-orange-500 transition-colors duration-300" />
+                      </motion.div>
                     </div>
-                    <div className="flex flex-col text-left">
-                      <span className="text-[#0F172A] font-black text-lg tracking-tight mb-0.5">자주 묻는 질문 1위 🏆</span>
-                      <span className="text-blue-600 font-bold text-sm">카드 가맹용 필수 '매장 사진' 촬영 가이드</span>
+                    
+                    <div className="flex flex-col text-left min-w-0 pr-2">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-white/90 font-black text-[9px] sm:text-xs tracking-widest uppercase bg-white/10 px-1.5 py-0.5 rounded shrink-0">MUST READ</span>
+                        <span className="text-orange-100 font-bold text-[9px] sm:text-xs truncate">실시간 조회수 1위</span>
+                      </div>
+                      <span className="text-white font-black text-base sm:text-xl tracking-tight mb-0.5 truncate">
+                        점주님들이 제일 많이 묻는 질문 TOP.1
+                      </span>
+                      <p className="text-white/80 font-bold text-[11px] sm:text-sm truncate">
+                        모르면 무조건 손해! 클릭해서 내용 확인하기
+                      </p>
                     </div>
                   </div>
-                  <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-[#0055FF] transition-colors relative z-10" />
+
+                  <div className="shrink-0 relative z-10">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-orange-500 transition-all duration-300 shadow-inner">
+                      <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-white group-hover:text-orange-500 transition-colors" />
+                    </div>
+                  </div>
                 </motion.button>
                 
                 <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-5 mb-12 flex items-start gap-4">
