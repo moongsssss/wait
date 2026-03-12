@@ -422,7 +422,7 @@ export default function App() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ 
                     opacity: 1, 
-                    y: 0,
+                    y: [0, -8, 0],
                     boxShadow: [
                       "0px 4px 12px rgba(245, 158, 11, 0.1)",
                       "0px 12px 24px rgba(245, 158, 11, 0.2)",
@@ -430,9 +430,9 @@ export default function App() {
                     ]
                   }}
                   transition={{ 
-                    duration: 3, 
-                    repeat: Infinity, 
-                    ease: "easeInOut" 
+                    opacity: { duration: 0.5 },
+                    y: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                    boxShadow: { duration: 3, repeat: Infinity, ease: "easeInOut" }
                   }}
                   className="w-full bg-gradient-to-br from-orange-500 via-amber-500 to-orange-600 border-none rounded-2xl p-5 sm:p-6 mb-10 flex items-center justify-between group transition-all relative overflow-hidden text-white"
                 >
