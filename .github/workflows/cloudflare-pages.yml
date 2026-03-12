@@ -29,6 +29,6 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: wait-list # You can change this to your Cloudflare Pages project name
+          projectName: wait-8z6 # Updated to match your Cloudflare project name
           directory: out
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
