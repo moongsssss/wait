@@ -430,7 +430,9 @@ export default function App() {
                     ]
                   }}
                   transition={{ 
-                    animate: { duration: 3, repeat: Infinity, ease: "easeInOut" }
+                    duration: 3, 
+                    repeat: Infinity, 
+                    ease: "easeInOut" 
                   }}
                   className="w-full bg-gradient-to-br from-orange-500 via-amber-500 to-orange-600 border-none rounded-2xl p-5 sm:p-6 mb-10 flex items-center justify-between group transition-all relative overflow-hidden text-white"
                 >

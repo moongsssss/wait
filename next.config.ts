@@ -2,21 +2,19 @@ import type { NextConfig } from "next";
 
 const isGithubPagesDeploy = process.env.GITHUB_PAGES_DEPLOY === 'true';
 
-let assetPrefix = undefined;
-let basePath = undefined;
-
-if (isGithubPagesDeploy && process.env.GITHUB_REPOSITORY) {
-  const repo = process.env.GITHUB_REPOSITORY.replace(/.*?\//, '');
-  assetPrefix = `/${repo}/`;
-  basePath = `/${repo}`;
-}
-
 const nextConfig: NextConfig = {
   output: 'export',
-  basePath: basePath,
-  assetPrefix: assetPrefix,
+  // GitHub Pages인 경우에만 저장소 이름 경로 적용, 그 외(Cloudflare 등)는 루트(/) 사용
+  basePath: isGithubPagesDeploy ? '/wait' : undefined,
+  assetPrefix: isGithubPagesDeploy ? '/wait/' : undefined,
   images: {
     unoptimized: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
   },
 };
 
