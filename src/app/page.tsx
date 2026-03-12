@@ -219,30 +219,41 @@ export default function App() {
   const handleCapture = async () => {
     if (captureRef.current) {
       try {
+        // 캡처 중임을 알리는 피드백 (선택사항)
+        const originalStyle = captureRef.current.style.boxShadow;
+        captureRef.current.style.boxShadow = "none"; // 캡처 시 복잡한 그림자 제거
+
         const canvas = await html2canvas(captureRef.current, { 
-          scale: 3, // Higher scale for PDF quality
+          scale: 2, // 3에서 2로 조정하여 메모리 부담 완화 및 속도 향상
           useCORS: true,
-          backgroundColor: '#FFFFFF'
+          backgroundColor: '#FFFFFF',
+          logging: false,
+          ignoreElements: (element) => {
+            // 캡처에 불필요하거나 오류를 일으킬 수 있는 블러 요소 제외
+            return element.classList.contains('blur-3xl');
+          }
         });
         
-        const imgData = canvas.toDataURL('image/png');
+        captureRef.current.style.boxShadow = originalStyle;
+
+        const imgData = canvas.toDataURL('image/png', 1.0);
         const pdf = new jsPDF({
           orientation: 'portrait',
           unit: 'mm',
           format: 'a4'
         });
 
-        const imgWidth = 210; // A4 width in mm
-        const pageHeight = 297; // A4 height in mm
+        const imgWidth = 210; 
+        const pageHeight = 297;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
         
-        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight, undefined, 'FAST');
         pdf.save("okpos_recommendation.pdf");
         
         alert("맞춤 구성 리포트가 PDF로 저장되었습니다. 상담 시 파일을 보여주시면 더욱 빠른 안내가 가능합니다.");
       } catch (e) {
         console.error("PDF generation failed:", e);
-        alert("파일 저장에 실패했습니다. 직접 캡처를 이용해주세요.");
+        alert("파일 저장 중 오류가 발생했습니다. 브라우저의 직접 캡처 기능을 이용해 주세요.");
       }
     }
   };
